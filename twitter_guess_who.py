@@ -3,6 +3,7 @@ import json
 import console_text
 from authentication import Authentication
 from api_handler import Search_Counts, Recent_Search_Data
+from string import punctuation
 import numpy as np
 np.random.seed(0)
 
@@ -32,6 +33,7 @@ class TwitterGuessWho:
         self.welcome()
         self.setup()
         self.round_tweet_counts()
+        self.round_word_cloud()
 
 
     def welcome(self):
@@ -119,4 +121,24 @@ class TwitterGuessWho:
         random_order = np.arange(self.num_users,dtype=int)
         np.random.shuffle(random_order)
 
+    def round_word_cloud(self):
+        """
+        Game round - Guess from wordcloud.
+        """
 
+        # Get data
+        recent_search_data = Recent_Search_Data(self.auth)
+        for user in self.users: 
+            response = recent_search_data(f"from:{user[1:]} -is:retweet")
+            parsed = json.loads(response.text)
+            tweet_text = [tweet["text"] for tweet in parsed["data"]]
+
+        # Remove punctuation, make lowercase, store separate words in a list
+        word_list = []
+        for text in tweet_text:
+            for p in punctuation: 
+                text = text.replace(p, "").lower()
+                for word in text.split(" "):
+                    word_list.append(word)
+
+        # ToDo --> separate above data per user. Then, generate wordcloud for each user.

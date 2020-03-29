@@ -26,7 +26,6 @@ class Recent_Search_Data:
         self.headers = {
             "Accept-Encoding": "gzip"
         }
-        print(self.headers)
         self.payload = ""
 
     def __call__(self, query):
