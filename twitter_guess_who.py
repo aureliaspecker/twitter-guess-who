@@ -49,7 +49,7 @@ class TwitterGuessWho:
             console_text.write_list("Users are:",self.users)
         else:
             raise ValueError("Not yet implemented!!!")
-
+        console_text.write_message("OK we are ready to play!")
 
 
     def load_predefined_user_set(self):
@@ -79,7 +79,7 @@ class TwitterGuessWho:
         """
         Get set of users (Twitter handles/user IDs) from command line.
         """
-
+        pass
 
 
     def add_user(self,user):

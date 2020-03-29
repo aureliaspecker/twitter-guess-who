@@ -4,7 +4,6 @@ This file controls input and output to console
 
 
 welcome_message = r"""
------------------------------------------------------------------
 __          __  _                            _        
 \ \        / / | |                          | |       
  \ \  /\  / /__| | ___ ___  _ __ ___   ___  | |_ ___  
@@ -28,7 +27,6 @@ __          ___           _
    \  /\  /  | | | | (_) |_|
     \/  \/   |_| |_|\___/(_)
     
-----------------------------------------------------------------
 """
 
 yes = ['y','Y','yes','Yes']
@@ -39,7 +37,9 @@ def write_welcome():
     """
     Write welcome message to console.
     """
+    write_dashes()
     print(welcome_message)
+    write_dashes()
 
 
 def write_message(message):
@@ -59,6 +59,14 @@ def write_list(message,values):
     print(message)
     for v in values:
         print(f'    * {v}')
+
+
+def write_dashes(size=70):
+    """
+    Write dashed line of given size to console.
+    :param size: int
+    """
+    print('-'*size)
 
 def yes_no_question(question):
     """
