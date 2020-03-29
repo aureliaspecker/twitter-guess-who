@@ -1,9 +1,12 @@
 from authentication import Authentication
+from twitter_guess_who import TwitterGuessWho
 from api_handler import Search_Counts, Recent_Search_Data
 
 def main():
+
     auth = Authentication()
-    print(auth)
+    tgw = TwitterGuessWho()
+    tgw()
 
     search_counts = Search_Counts(auth)
     response_search_counts = search_counts("from:AureliaSpecker -is:retweet")
