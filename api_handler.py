@@ -19,13 +19,17 @@ class Search_Counts:
         print(payload)
         return requests.request("POST", self.url, data=payload, headers=self.headers, auth=self.auth)
 
+class Recent_Search_Data: 
+    def __init__(self, authentication, max_results=100):
+        self.url = "https://api.twitter.com/labs/2/tweets/search"
+        self.max_results = max_results
+        self.auth = authentication.bearer_oauth
+        self.headers = {
+            "Accept-Encoding": "gzip"
+        }
+        print(self.headers)
+        self.payload = ""
 
-# class Recent_Search:
-#     def __init__(self, url, max_results=100):
-#         self.url = "https://api.twitter.com/labs/2/tweets/search"
-#         self.max_results = max_results
-
-#         self.headers = kwargs.get("headers", None)
-
-#     def request(self, authentication):
-#         self.response = requests.get(url=self.url, auth=authentication.BEARER_TOKEN, headers=self.headers)
+    def __call__(self, query):
+        querystring = {"query": query,"max_results":"100"} 
+        return requests.request("GET", url=self.url, data=self.payload, auth=self.auth, headers=self.headers, params=querystring)
