@@ -1,5 +1,10 @@
 import glob
+import json
 import console_text
+from authentication import Authentication
+from api_handler import Search_Counts, Recent_Search_Data
+import numpy as np
+np.random.seed(0)
 
 class TwitterGuessWho:
     """
@@ -12,6 +17,10 @@ class TwitterGuessWho:
         Initialise game parameters.
         """
 
+        # Authentication
+        self.auth = Authentication()
+
+        # Game containers
         self.users = []
 
 
@@ -22,6 +31,7 @@ class TwitterGuessWho:
 
         self.welcome()
         self.setup()
+        self.round_tweet_counts()
 
 
     def welcome(self):
@@ -45,6 +55,7 @@ class TwitterGuessWho:
         else:
             successful_load = False
         if successful_load:
+            self.num_users = len(self.users)
             console_text.write_message("User set loaded successfully!")
             console_text.write_list("Users are:",self.users)
         else:
@@ -89,3 +100,23 @@ class TwitterGuessWho:
         """
 
         self.users.append(f'@{user}')
+
+
+    def round_tweet_counts(self):
+        """
+        Game round - Guess users from number of tweets.
+        """
+
+        # Get number of tweets for each user
+        tweet_count = []
+        search_counts = Search_Counts(self.auth)
+        for user in self.users:
+            response = search_counts(f"from:{user[1:]} -is:retweet")
+            parsed = json.loads(response.text)
+            tweet_count.append(parsed['totalCount'])
+
+        # 
+        random_order = np.arange(self.num_users,dtype=int)
+        np.random.shuffle(random_order)
+
+
