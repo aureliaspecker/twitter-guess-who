@@ -16,7 +16,6 @@ class Search_Counts:
 
     def __call__(self, query):
         payload = "{{\n\t\"query\": \"{}\", \n\t\"bucket\": \"{}\"\n}}".format(query, self.bucket)
-        print(payload)
         return requests.request("POST", self.url, data=payload, headers=self.headers, auth=self.auth)
 
 class Recent_Search_Data: 
