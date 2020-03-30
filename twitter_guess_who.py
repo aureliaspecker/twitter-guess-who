@@ -1,5 +1,6 @@
 import glob
 import json
+import time
 import console_text
 from authentication import Authentication
 from api_handler import Search_Counts, Recent_Search_Data
@@ -20,9 +21,6 @@ class TwitterGuessWho:
         # Authentication
         self.auth = Authentication()
 
-        # Game containers
-        self.users = []
-
 
     def __call__(self):
         """
@@ -31,6 +29,7 @@ class TwitterGuessWho:
 
         self.welcome()
         self.setup()
+        self.round_count = 1
         self.round_tweet_counts()
 
 
@@ -50,17 +49,24 @@ class TwitterGuessWho:
         # Get user set
         console_text.write_message("Let's start by setting up your game!\nFirst let's get the users.")
         predefined = console_text.yes_no_question("Would you like to use a predefined user set?")
+        self.users = []
         if predefined:
             successful_load = self.load_predefined_user_set()
         else:
             successful_load = False
         if successful_load:
-            self.num_users = len(self.users)
+            self.users = np.array(self.users)
+            self.num_users = self.users.size
             console_text.write_message("User set loaded successfully!")
             console_text.write_list("Users are:",self.users)
         else:
             raise ValueError("Not yet implemented!!!")
         console_text.write_message("OK we are ready to play!")
+        console_text.write_dashes()
+        time.sleep(1)
+
+        # Setup scoring
+        self.score = 0
 
 
     def load_predefined_user_set(self):
@@ -96,7 +102,7 @@ class TwitterGuessWho:
     def add_user(self,user):
         """
         Add users based on Twitter handle or user ID
-        :param handle: str, Twitter handle 
+        :param user: str, Twitter handle 
         """
 
         self.users.append(f'@{user}')
@@ -107,16 +113,46 @@ class TwitterGuessWho:
         Game round - Guess users from number of tweets.
         """
 
+        # Header
+        console_text.write_round(self.round_count)
+        console_text.write_message("This is the tweet count round!\nYou must match the number of tweets to each user.\nOne point for each correct answer!\n")
+
         # Get number of tweets for each user
-        tweet_count = []
+        tweet_counts = np.zeros(self.num_users,dtype=int)
         search_counts = Search_Counts(self.auth)
-        for user in self.users:
+        for i,user in enumerate(self.users):
             response = search_counts(f"from:{user[1:]} -is:retweet")
             parsed = json.loads(response.text)
-            tweet_count.append(parsed['totalCount'])
+            tweet_counts[i] = parsed['totalCount']
 
-        # 
-        random_order = np.arange(self.num_users,dtype=int)
-        np.random.shuffle(random_order)
+        # Display options
+        console_text.write_message('Users:')
+        console_text.write_options_letter(self.users)
+        sort_order = np.argsort(-tweet_counts)
+        sorted_tweet_counts = tweet_counts[sort_order]
+        console_text.write_message('Tweet counts:')
+        console_text.write_options_numeric(sorted_tweet_counts)
 
-
+        # Get guesses and compare to answers
+        attempts = 0 # number of attempts
+        while True:
+            guesses = np.zeros_like(self.users,dtype=int)
+            console_text.write_message('OK, so which number corresponds to:\n')
+            for i,user in enumerate(self.users):
+                guesses[i] = console_text.integer_question(user,lower_bound=1,upper_bound=self.num_users)-1
+            attempts += 1
+            compare_answers = [sort_order[i]==guesses[i] for i in range(self.num_users)]
+            correct_answers = np.sum(compare_answers)
+            if correct_answers==self.num_users and attempts==1:
+                console_text.write_message('You got them all correct first time! Amazing!')
+                break
+            elif correct_answers==self.num_users:
+                console_text.write_message('You got them all correct now, nice!')
+                break
+            else:
+                console_text.write_message(('You got {} correct: '+'{} '*correct_answers).format(correct_answers,*self.users[compare_answers]))
+                reattempt = console_text.yes_no_question('Would you like to retry for 1 point?')
+                if not reattempt:
+                    break
+        self.score += correct_answers-(attempts-1)
+        print(self.score)
