@@ -32,6 +32,7 @@ class TwitterGuessWho:
         self.setup()
         self.round_count = 1
         self.round_tweet_counts()
+        print('XXXXXXX')
         self.round_word_cloud()
 
 
@@ -165,9 +166,13 @@ class TwitterGuessWho:
         Game round - Guess from wordcloud.
         """
 
-        # Get data
+        # Header
+        console_text.write_round(self.round_count)
+        console_text.write_message("This is the word cloud round!\nYou must match the word cloud to each user.\nOne point for each correct answer!\n")
+
+        # Get data for each user
         recent_search_data = Recent_Search_Data(self.auth)
-        for user in self.users: 
+        for i, user in enumerate(self.users): 
             response = recent_search_data(f"from:{user[1:]} -is:retweet")
             parsed = json.loads(response.text)
             tweet_text = [tweet["text"] for tweet in parsed["data"]]
