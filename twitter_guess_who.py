@@ -138,11 +138,13 @@ class TwitterGuessWho:
 
         # Get guesses and compare to answers
         attempts = 0 # number of attempts
+        compare_answers = np.zeros(self.num_users,dtype=bool) # Boolean whether player answer matches correct answer
         while True:
             guesses = np.zeros_like(self.users,dtype=int)
             console_text.write_message('OK, so which number corresponds to:\n')
             for i,user in enumerate(self.users):
-                guesses[i] = console_text.integer_question(user,lower_bound=1,upper_bound=self.num_users)-1
+                if compare_answers[i]==0: # Ask question only if not correct last time
+                    guesses[i] = console_text.integer_question(user,lower_bound=1,upper_bound=self.num_users)-1
             attempts += 1
             compare_answers = [sort_order[i]==guesses[i] for i in range(self.num_users)]
             correct_answers = np.sum(compare_answers)
