@@ -2,6 +2,7 @@ import glob
 import json
 import time
 import console_text
+import rounds
 from authentication import Authentication
 from api_handler import Search_Counts, Recent_Search_Data
 from string import punctuation
@@ -32,9 +33,8 @@ class TwitterGuessWho:
 
         self.welcome()
         self.setup()
-        self.round_count = 0
-        # self.round_tweet_counts()
-        self.round_word_cloud()
+        round1 = rounds.RoundTweetCount()
+        round1(self.auth,self.users)
 
 
     def welcome(self):
