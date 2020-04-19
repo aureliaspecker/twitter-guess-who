@@ -7,7 +7,9 @@ from authentication import Authentication
 from api_handler import Search_Counts, Recent_Search_Data
 from string import punctuation
 import numpy as np
-np.random.seed(0)
+from nltk.corpus import stopwords
+from wordcloud import WordCloud
+from matplotlib import pyplot as plt
 
 class TwitterGuessWho:
     """
@@ -32,13 +34,7 @@ class TwitterGuessWho:
         self.welcome()
         self.setup()
         round1 = rounds.RoundTweetCount()
-
-
         round1(self.auth,self.users)
-        # self.round_count = 1
-        # self.round_tweet_counts()
-        # print('XXXXXXX')
-        # self.round_word_cloud()
 
 
     def welcome(self):
@@ -122,6 +118,7 @@ class TwitterGuessWho:
         """
 
         # Header
+        self.round_count += 1
         console_text.write_round(self.round_count)
         console_text.write_message("This is the tweet count round!\nYou must match the number of tweets to each user.\nOne point for each correct answer!\n")
 
@@ -166,6 +163,7 @@ class TwitterGuessWho:
                     break
         self.score += correct_answers-(attempts-1)
         print(self.score)
+        console_text.write_dashes()
         
 
     def round_word_cloud(self):
@@ -174,22 +172,52 @@ class TwitterGuessWho:
         """
 
         # Header
+        self.round_count += 1
         console_text.write_round(self.round_count)
         console_text.write_message("This is the word cloud round!\nYou must match the word cloud to each user.\nOne point for each correct answer!\n")
 
-        # Get data for each user
         recent_search_data = Recent_Search_Data(self.auth)
-        for i, user in enumerate(self.users): 
+        stop_words = set(stopwords.words('english'))
+
+        for user in self.users:
+            
+            #Gets data for each user
             response = recent_search_data(f"from:{user[1:]} -is:retweet")
             parsed = json.loads(response.text)
             tweet_text = [tweet["text"] for tweet in parsed["data"]]
+            
+            all_words = []
 
-        # Remove punctuation, make lowercase, store separate words in a list
-        word_list = []
-        for text in tweet_text:
-            for p in punctuation: 
-                text = text.replace(p, "").lower()
+            for text in tweet_text:
+
+                #Removes punctuation & makes lowercase
+                for p in punctuation: 
+                    text = text.replace(p, "").lower()
+                
+                #Stores all the words in a list
                 for word in text.split(" "):
-                    word_list.append(word)
+                    all_words.append(word)
 
-        # ToDo --> separate above data per user. Then, generate wordcloud for each user.
+            # Remove common words
+            filtered_words_list = [word for word in all_words if not word in stop_words]
+            filtered_words = " ".join(filtered_words_list)
+            print(filtered_words)
+
+        # Generate wordcloud for each user
+        twitter_wordcloud = WordCloud(
+            width=480, 
+            height=480, 
+            margin=0, 
+            colormap="coolwarm", 
+            max_words=100
+        ).generate(filtered_words)
+
+        # Display the generated image:
+        plt.imshow(twitter_wordcloud, interpolation='bilinear')
+        plt.axis("off")
+        plt.margins(x=0, y=0)
+        plt.show()
+
+        # ToDo --> Scores 
+
+        console_text.write_dashes()
