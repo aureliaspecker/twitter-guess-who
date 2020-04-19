@@ -1,5 +1,6 @@
 import console_text
 from api_handler import Search_Counts, Recent_Search_Data, Followers_Ids
+from cache import cache_response, load_cache
 import numpy as np
 import json
 
@@ -136,9 +137,16 @@ class RoundTweetCount(RoundBase):
         # Get number of Tweets for each user
         tweet_counts = np.zeros(self.num_users, dtype=int)
         search_counts = Search_Counts(self.auth)
-        for i, user in enumerate(self.users):
-            response = search_counts(f"from:{user[1:]} -is:retweet")
-            parsed = json.loads(response.text)
+        for i,user in enumerate(self.users):
+            # Attempt to load response from cache
+            response = load_cache(user,"searchcounts",2)
+            # If no cache make API call and cache result
+            if response is None:
+                response = search_counts(f"from:{user[1:]} -is:retweet")
+                if response.status_code == 200:
+                    response = response.text
+                    cache_response(user,response,"searchcounts")
+            parsed = json.loads(response)
             tweet_counts[i] = parsed['totalCount']
 
         # Store number of Tweets as answers
@@ -157,6 +165,7 @@ class RoundFollowerCount(RoundBase):
 
         self.score = 0
 
+
     def header(self):
         """
         Write round header.
@@ -167,6 +176,7 @@ class RoundFollowerCount(RoundBase):
         console_text.write_message(
             "This is the follower count round!\nYou must guess the number of followers for each user.\nOne point for each correct answer!\n")
 
+
     def generate_answers(self):
         """
         Get number of followers for each user.
@@ -176,11 +186,19 @@ class RoundFollowerCount(RoundBase):
         # Get number of followers each user
         follower_counts = np.zeros(self.num_users, dtype=int)
         followers = Followers_Ids(self.auth)
-        for i, user in enumerate(self.users):
-            response = followers(f"{user[1:]}")
-            parsed = json.loads(response.text)
-            print(parsed)
-            print(parsed['ids'])
+
+        # for i, user in enumerate(self.users):
+        for i in range(2):
+            user = self.users[i]
+            # Attempt to load response from cache
+            response = load_cache(user,"followersids",2)
+            # If no cache make API call and cache result
+            if response is None:
+                response = followers(f"{user[1:]}")
+                if response.status_code == 200:
+                    response = response.text
+                    cache_response(user,response,"followersids")
+            parsed = json.loads(response)
             follower_counts[i] = len(parsed['ids'])
 
         # Store number of Tweets as answers
