@@ -33,8 +33,10 @@ class TwitterGuessWho:
 
         self.welcome()
         self.setup()
-        round1 = rounds.RoundTweetCount()
-        round1(self.auth,self.users)
+        # round1 = rounds.RoundTweetCount()
+        # round1(self.auth,self.users)
+        round2 = rounds.RoundFollowerCount()
+        round2(self.auth, self.users)
 
 
     def welcome(self):
