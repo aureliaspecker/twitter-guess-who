@@ -9,16 +9,11 @@ export TWITTER_CONSUMER_SECRET=XXXXXXXXXXXXXX
 export TWITTER_ACCESS_TOKEN=XXXXXXXXXXXXXXXXX
 export TWITTER_ACCESS_TOKEN_SECRET=XXXXXXXXXX
 export TWITTER_BEARER_TOKEN=XXXXXXXXXXXXXXXXX
+export TWITTER_ENV=xxx 
 ```
 
-You can find your consumer key, consumer secret, access token, and access token secret in your Twitter developer portal, under app details: https://developer.twitter.com/en/apps/
+You can find your consumer key, consumer secret, access token, and access token secret in your Twitter developer portal, under [app details](https://developer.twitter.com/en/apps/)
 
-You can use this tool to generate a bearer token: https://glitch.com/~twitter-bearer-token 
+You can use [this tool](https://glitch.com/~twitter-bearer-token) to generate a bearer token 
 
-## Environment variables
-In order to get counts data, you must also export your dev environment for the Premium Search API. You can find this in your developer portal, under dev environments: https://developer.twitter.com/en/account/environments
-
-For example: 
-```
-export ENV=prod 
-```
+You can find your environment variable in your twitter developer portal under [Dev environments](https://developer.twitter.com/en/account/environments)

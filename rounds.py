@@ -1,7 +1,8 @@
 import console_text
-from api_handler import Search_Counts, Recent_Search_Data
+from api_handler import Search_Counts, Recent_Search_Data, Followers_Ids
 import numpy as np
 import json
+
 
 class RoundBase:
     """
@@ -143,3 +144,44 @@ class RoundTweetCount(RoundBase):
         # Store number of Tweets as answers
         self.answers = tweet_counts
 
+
+class RoundFollowerCount(RoundBase):
+    """
+    Round where players guess number of followers each user has.
+    """
+
+    def __init__(self, **kwargs):
+        """
+
+        """
+
+        self.score = 0
+
+    def header(self):
+        """
+        Write round header.
+        """
+
+        self.number += 1
+        console_text.write_round(self.number)
+        console_text.write_message(
+            "This is the follower count round!\nYou must guess the number of followers for each user.\nOne point for each correct answer!\n")
+
+    def generate_answers(self):
+        """
+        Get number of followers for each user.
+        :return: 
+        """
+
+        # Get number of followers each user
+        follower_counts = np.zeros(self.num_users, dtype=int)
+        followers = Followers_Ids(self.auth)
+        for i, user in enumerate(self.users):
+            response = followers(f"{user[1:]}")
+            parsed = json.loads(response.text)
+            print(parsed)
+            print(parsed['ids'])
+            follower_counts[i] = len(parsed['ids'])
+
+        # Store number of Tweets as answers
+        self.answers = follower_counts
