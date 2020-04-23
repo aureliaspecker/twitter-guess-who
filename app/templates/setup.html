@@ -13,9 +13,8 @@
         <title>Setup</title>
     </head>
     <body class="text-center">
-        <div class=col-md-4></div>
-        <div class="col-md-4 container d-flex h-100">
-            <div class="row justify-content-center align-self-center">
+        <div class="col-md-2 container d-flex h-100">
+            <div  class="row justify-content-center align-self-center">
                 <main role="main" class="inner cover">
                     {% block content %}
                     <h1 class="cover-heading">Setup Users</h1>
@@ -37,6 +36,9 @@
                     {% endif %}
                     {% endwith %}
                     {% endblock %}
+                    <p>
+                        <a href="/round1" class="btn btn-lg btn-secondary">Go to first round</a>
+                    </p>
                 </main>
             </div>
      </div>

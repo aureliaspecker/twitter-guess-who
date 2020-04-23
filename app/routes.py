@@ -1,9 +1,13 @@
+import os
 from app import app
 from flask import render_template, flash, redirect
 from app.forms import InputUsersForm
-import os
+from .server.twitter_guess_who import TwitterGuessWho
+
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
+
+tgw = TwitterGuessWho()
 
 @app.route('/')
 
@@ -15,8 +19,12 @@ def index():
 def setup():
     form = InputUsersForm()
     if form.validate_on_submit():
-        flash('XXX {}'.format(form.username.data))
-        return redirect('/setup')
+        if tgw.num_users == 6: 
+            return redirect('/round1')
+        else: 
+            tgw.add_user(form.username.data)
+            flash('User added! {}'.format(form.username.data))
+            return redirect('/setup')
     return render_template('setup.html', title='Setup', form=form)
 
 

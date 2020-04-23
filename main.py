@@ -1,10 +1,6 @@
 from app import app
-from twitter_guess_who import TwitterGuessWho
-
-def main():
-    pass
-    # tgw = TwitterGuessWho()
-    # tgw()
+from livereload import server
     
 if __name__ == "__main__":
-    main()
+    server = Server(app.wsgi_app)
+    server.serve()

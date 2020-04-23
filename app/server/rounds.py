@@ -1,6 +1,6 @@
-import console_text
-from api_handler import Search_Counts, Recent_Search_Data, Followers_Ids
-from cache import cache_response, load_cache
+from .console_text import *
+from .api_handler import Search_Counts, Recent_Search_Data, Followers_Ids
+from .cache import cache_response, load_cache
 import numpy as np
 import json
 

@@ -1,10 +1,10 @@
 import glob
 import json
 import time
-import console_text
-import rounds
-from authentication import Authentication
-from api_handler import Search_Counts, Recent_Search_Data
+from .console_text import *
+from .rounds import *
+from .authentication import Authentication
+from .api_handler import Search_Counts, Recent_Search_Data
 from string import punctuation
 import numpy as np
 from nltk.corpus import stopwords
@@ -24,6 +24,8 @@ class TwitterGuessWho:
 
         # Authentication
         self.auth = Authentication()
+        self.users = []
+        self.num_users = 0
 
 
     def __call__(self):
@@ -110,8 +112,8 @@ class TwitterGuessWho:
         Add users based on Twitter handle or user ID
         :param user: str, Twitter handle 
         """
-
         self.users.append(f'@{user}')
+        self.num_users += 1
 
 
     def round_tweet_counts(self):
