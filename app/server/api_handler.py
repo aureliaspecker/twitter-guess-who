@@ -2,6 +2,30 @@ import requests
 import datetime as dt
 
 
+class Users_Lookup:
+    """
+    Get fully hydrated user obejects.
+    """
+
+    def __init__(self, authentication):
+        """
+        :param authentication: Authentication object (see authentication.py)
+        """
+
+        self.url = f"https://api.twitter.com/1.1/users/lookup.json"
+        self.auth = authentication.generate_oauth1()
+
+
+    def __call__(self, query):
+        """
+        :param query: str
+        :return: user objects for specified query
+        """
+
+        url = f'{self.url}?screen_name={query}'
+        return requests.request("GET", url=url, auth=self.auth)
+
+
 class Search_Counts:
     """
     Full archive search counts endpoint.
@@ -31,6 +55,7 @@ class Search_Counts:
         :param query: str
         :return: data volumes for specified query
         """
+
         payload = "{{\n\t\"query\": \"{}\", \n\t\"bucket\": \"{}\",\n\t\t\"fromDate\": \"{}\",\n\t\t\"toDate\": \"{}\"\n}}".format(query, self.bucket, self.from_date, self.to_date)
         return requests.request("POST", self.url, data=payload, headers=self.headers, auth=self.auth)
 

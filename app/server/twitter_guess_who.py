@@ -4,7 +4,7 @@ import time
 from .console_text import *
 from .rounds import *
 from .authentication import Authentication
-from .api_handler import Search_Counts, Recent_Search_Data
+from .api_handler import Users_Lookup, Search_Counts, Recent_Search_Data
 from string import punctuation
 import numpy as np
 from nltk.corpus import stopwords
@@ -112,8 +112,19 @@ class TwitterGuessWho:
         Add users based on Twitter handle or user ID
         :param user: str, Twitter handle 
         """
-        self.users.append(f'@{user}')
-        self.num_users += 1
+
+        # Add @ handle
+        if user[0] != '@':
+            user = f'@{user}'
+
+        # Check if user exists and store
+        user_lookup = Users_Lookup(self.auth)
+        user_exists = user_lookup(user[1:]).status_code == 200
+        if user_exists:
+            self.users.append(f'{user}')
+            self.num_users += 1
+
+        return user_exists
 
 
     def round_tweet_counts(self):

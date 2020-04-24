@@ -22,8 +22,11 @@ def setup():
         if tgw.num_users == 6: 
             return redirect('/round1')
         else: 
-            tgw.add_user(form.username.data)
-            flash('User added! {}'.format(form.username.data))
+            user_exists = tgw.add_user(form.username.data)
+            if user_exists:
+                flash('User added: {}'.format(tgw.users[-1]))
+            else:
+                flash('User does not exist: {}'.format(form.username.data))
             return redirect('/setup')
     return render_template('setup.html', title='Setup', form=form)
 
