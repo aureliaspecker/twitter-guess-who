@@ -30,7 +30,7 @@ def setup():
             return redirect('/setup')
     return render_template('setup.html', title='Setup', form=form)
 
-
 @app.route('/round1')
 def round1():
+    tgw.get_user_data()
     return render_template('round1.html', title='Round-1')

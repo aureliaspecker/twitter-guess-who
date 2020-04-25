@@ -10,6 +10,8 @@ import numpy as np
 from nltk.corpus import stopwords
 from wordcloud import WordCloud
 from matplotlib import pyplot as plt
+import shortuuid
+import pickle5 as pickle
 
 class TwitterGuessWho:
     """
@@ -26,7 +28,7 @@ class TwitterGuessWho:
         self.auth = Authentication()
         self.users = []
         self.num_users = 0
-
+        self.uuid = shortuuid.uuid()
 
     def __call__(self):
         """
@@ -126,6 +128,29 @@ class TwitterGuessWho:
 
         return user_exists
 
+    def get_user_data(self):
+        """
+        Make API calls to get and store data ahead of the game. 
+        :return: 
+        """
+
+        #Get Tweet counts for each user
+        with open(f"./app/data/tweet_counts_{self.uuid}.txt", "wb") as data_file:
+            # Initiate empty dictionary
+            counts_data = {} 
+            # Get number of Tweets for each user
+            search_counts = Search_Counts(self.auth)
+            for i,user in enumerate(self.users):
+                # Make API call
+                response = search_counts(f"from:{user[1:]} -is:retweet")
+                if response.status_code == 200:
+                    response = response.text
+                    parsed = json.loads(response)
+                    counts_data[user] = parsed["totalCount"]
+                    # Save data to text file
+                else: 
+                    raise ValueError("Unsuccessful API call")
+            pickle.dump(counts_data, data_file)
 
     def round_tweet_counts(self):
         """
