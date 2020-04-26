@@ -29,6 +29,8 @@ class TwitterGuessWho:
         self.users = []
         self.num_users = 0
         self.uuid = shortuuid.uuid()
+        self.score = 0
+
 
     def __call__(self):
         """
@@ -128,7 +130,17 @@ class TwitterGuessWho:
 
         return user_exists
 
-    def get_user_data(self):
+
+    def get_users(self):
+        """
+        Get all users.
+        :return: list of str
+        """
+
+        return self.users
+
+
+    def make_api_calls(self):
         """
         Make API calls to get and store data ahead of the game. 
         :return: 
@@ -151,6 +163,28 @@ class TwitterGuessWho:
                 else: 
                     raise ValueError("Unsuccessful API call")
             pickle.dump(counts_data, data_file)
+
+
+    def get_tweet_counts(self,sort=True):
+        """
+        Get Tweet counts and corresponding users.
+        :param sort: bool, sort tweet counts descending
+        :return: list int, list str, of counts and users 
+        """
+
+        with open(f"./app/data/tweet_counts_{self.uuid}.txt", "rb") as data_file:
+            data = pickle.load(data_file)
+            users = [k for k,v in data.items()]
+            counts = [v for k,v in data.items()]
+            if sort:
+                users = np.array(users)
+                counts = np.array(counts)
+                sort_order = np.argsort(-counts)
+                counts = [c for c in counts[sort_order]]
+                users = [u for u in users[sort_order]]
+
+        return counts, users
+
 
     def round_tweet_counts(self):
         """
