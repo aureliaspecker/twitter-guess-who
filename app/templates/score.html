@@ -9,34 +9,19 @@
 
         <!-- main.css -->
         <link rel="icon" href="data:,">
-        <title>Setup</title>
+        <title>Score</title>
     </head>
     <body class="text-center">
         <div class="col-md-2 container d-flex h-100">
             <div  class="row justify-content-center align-self-center">
                 <main role="main" class="inner cover">
                     {% block content %}
-                    <h1 class="cover-heading">Setup Users</h1>
-                    <form action="" method="post" novalidate>
-                        {{ form.hidden_tag() }}
-                        <p>
-                            {{ form.username.label }}<br>
-                            {{ form.username(size=32) }}
-                        </p>
-                    </form>
+                    <h1 class="cover-heading">Your Score</h1>
                     <hr>
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    <ul>
-                        {% for message in messages %}
-                        <li>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% endwith %}
+                    {{score}}
                     {% endblock %}
                     <p>
-                        <a href={{next_page}} class="btn btn-lg btn-secondary">Go to first round</a>
+                        <a href={{next_page}} class="btn btn-lg btn-secondary">Go to next round</a>
                     </p>
                 </main>
             </div>

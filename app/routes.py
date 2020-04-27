@@ -12,7 +12,6 @@ app.config['SECRET_KEY'] = SECRET_KEY
 # Initialise game object
 tgw = TwitterGuessWho()
 
-
 @app.route('/')
 
 
@@ -40,7 +39,7 @@ def setup():
             else:
                 flash('User does not exist: {}'.format(form.username.data))
             return redirect('/setup')
-    return render_template('setup.html', title='Setup', form=form)
+    return render_template('setup.html', title='Setup', form=form, next_page=f"/round{tgw.next_round}")
 
 
 @app.route('/round1',methods=['post','get'])
@@ -66,9 +65,27 @@ def round1():
         for i in range(num_users):
             if jumbled_users[i]==users[int(form_list.select_forms.data[i]['select'])]:
                 points += 1
-        flash('You scored {} points!'.format(points))
-        return redirect('/round1')
+        tgw.update_score(points)
+        tgw.next_round += 1
+        return redirect('/score')
     return render_template('round1.html', title='Round1', n=num_users, form_list=form_list, tweet_counts=tweet_counts)
+
+@app.route('/round2', methods=['post', 'get'])
+def round2():
+    """
+    Second round of the game.
+    """
+
+    return render_template('round2.html', title='Round2')
+
+@app.route('/score', methods=['get'])
+def score():
+    """
+    Displays score
+    """
+
+    score = tgw.get_score()
+    return render_template('score.html', score=score, next_page=f"/round{tgw.next_round}")
 
 
 def construct_select_forms(users):

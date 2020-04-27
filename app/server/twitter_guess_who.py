@@ -30,6 +30,7 @@ class TwitterGuessWho:
         self.num_users = 0
         self.uuid = shortuuid.uuid()
         self.score = 0
+        self.next_round = 1
 
 
     def __call__(self):
@@ -140,6 +141,12 @@ class TwitterGuessWho:
         return self.users
 
 
+    def update_score(self, points):
+        self.score += points
+
+    def get_score(self):
+        return self.score
+    
     def make_api_calls(self):
         """
         Make API calls to get and store data ahead of the game. 
