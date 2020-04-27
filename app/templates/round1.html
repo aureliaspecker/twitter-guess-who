@@ -1,55 +1,32 @@
-<html>
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "parent.html" %}
+{% block title %}Round1{% endblock %}
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+{% block header %}
+    Round1
+{% endblock %}
 
-        <!-- main.css -->
-        <link rel="icon" href="data:,">
-        <title>Setup</title>
-    </head>
-    <body class="text-center">
-        <div class="col-md-2 container d-flex h-100">
-            <div  class="row justify-content-center align-self-center">
-                <main role="main" class="inner cover">
+{% block paragraph %} 
+    Here are the number of Tweets from the last 4 weeks.
+    <br>
+    Match them up for 1 point each.
+{% endblock %}
 
-
-                    {% block content %}
-
-                    <h1 class="cover-heading">Round 1</h1>
-                    <p>
-                        Here are the number of Tweets from the last 4 weeks.
-                        Match them up for 1 point each!
-                    </p>
-                    <form action="" method="post" novalidate>
-                        {{ form_list.hidden_tag() }}
-                    <ol type="a">
-                        {% for i in range(0, n) %}
-                        <li>{{tweet_counts[i]}} &emsp; {{form_list.select_forms[i].select.label}} {{form_list.select_forms[i].select}}</li>
-                        {% endfor %}
-                    </ol>
-                        <input class="btn btn-lg btn-secondary" type="submit" value="Submit">
-                    </form>
-
-
-                    <hr>
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        {% for message in messages %}
-                        <p>{{ message }}</p>
-                        {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-
-                    {% endblock %}
-
-
-                </main>
-            </div>
-     </div>
-    <div class=col-md-4></div>
- </body>
-</html>
+{% block content %}
+    <form action="" method="post" novalidate>
+        {{ form_list.hidden_tag() }}
+    <ol type="a">
+        {% for i in range(0, n) %}
+        <li>{{tweet_counts[i]}} &emsp; {{form_list.select_forms[i].select.label}} {{form_list.select_forms[i].select}}</li>
+        {% endfor %}
+    </ol>
+        <input class="btn btn-lg btn-secondary" type="submit" value="Submit">
+    </form>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+{% endblock %}
