@@ -76,7 +76,15 @@ def round2():
     Second round of the game.
     """
 
-    return render_template('round2.html', title='Round2')
+    # Get data for this round
+    users = tgw.get_users()
+    num_users = len(users)
+    user_bios, jumbled_users = tgw.get_user_bio()
+
+    #Generate forms
+    form_list = construct_select_forms(users)
+ 
+    return render_template('round2.html', title='Round2', n=num_users, form_list=form_list, user_bios=user_bios)
 
 @app.route('/score', methods=['get'])
 def score():

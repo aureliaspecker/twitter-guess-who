@@ -124,10 +124,13 @@ class TwitterGuessWho:
 
         # Check if user exists and store
         user_lookup = Users_Lookup(self.auth)
-        user_exists = user_lookup(user[1:]).status_code == 200
+        user_data = user_lookup(user[1:])
+        user_exists = user_data.status_code == 200
         if user_exists:
             self.users.append(f'{user}')
             self.num_users += 1
+            with open(f"./app/data/user_data_{user[1:]}_{self.uuid}.txt", "w") as user_file:
+                json.dump(user_data.text, user_file)
 
         return user_exists
 
@@ -192,6 +195,24 @@ class TwitterGuessWho:
 
         return counts, users
 
+    def get_user_bio(self):
+        """
+        Get user bios from hydrated user object.
+        """
+        users = []
+        bios = []
+
+        for user in self.users: 
+            with open(f"./app/data/user_data_{user[1:]}_{self.uuid}.txt", "rb") as user_file:
+                data = json.load(user_file)
+                parsed = json.loads(data)
+                print("XXXXXXXXXXXXXXXXXXXXXX", parsed)
+                user = parsed[0]["screen_name"]
+                bio = parsed[0]["description"]
+                users.append(user)
+                bios.append(bio)
+
+        return bios, users
 
     def round_tweet_counts(self):
         """

@@ -25,7 +25,6 @@ class Users_Lookup:
         url = f'{self.url}?screen_name={query}'
         return requests.request("GET", url=url, auth=self.auth)
 
-
 class Search_Counts:
     """
     Full archive search counts endpoint.

@@ -1,1 +1,32 @@
-hello world
+{% extends "parent.html" %}
+{% block title %}Round2{% endblock %}
+
+{% block header %}
+    Round2
+{% endblock %}
+
+{% block paragraph %} 
+    Here are the Twitter bios for each user.
+    <br>
+    Match them up for 1 point each.
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        {{ form_list.hidden_tag() }}
+    <ol type="a">
+        {% for i in range(0, n) %}
+        <li>{{user_bios[i]}} &emsp; {{form_list.select_forms[i].select.label}} {{form_list.select_forms[i].select}}</li>
+        {% endfor %}
+    </ol>
+        <input class="btn btn-lg btn-secondary" type="submit" value="Submit">
+    </form>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+{% endblock %}
