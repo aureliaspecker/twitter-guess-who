@@ -70,6 +70,7 @@ def round1():
         return redirect('/score')
     return render_template('round1.html', title='Round1', n=num_users, form_list=form_list, tweet_counts=tweet_counts)
 
+
 @app.route('/round2', methods=['post', 'get'])
 def round2():
     """
@@ -79,12 +80,24 @@ def round2():
     # Get data for this round
     users = tgw.get_users()
     num_users = len(users)
-    user_bios, jumbled_users = tgw.get_user_bio()
+    user_bios, jumbled_users = tgw.get_user_bio(seed=0)
 
     #Generate forms
     form_list = construct_select_forms(users)
- 
+
+    # Get player answers
+    if form_list.is_submitted():
+        points = 0
+        for i in range(num_users):
+            player_answer = users[int(form_list.select_forms.data[i]['select'])][1:]
+            correct_answer = jumbled_users[i]
+            if correct_answer==player_answer:
+                points += 1
+        tgw.update_score(points)
+        tgw.next_round += 1
+        return redirect('/score')
     return render_template('round2.html', title='Round2', n=num_users, form_list=form_list, user_bios=user_bios)
+
 
 @app.route('/score', methods=['get'])
 def score():

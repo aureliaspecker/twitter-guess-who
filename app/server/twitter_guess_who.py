@@ -127,7 +127,10 @@ class TwitterGuessWho:
         user_data = user_lookup(user[1:])
         user_exists = user_data.status_code == 200
         if user_exists:
-            self.users.append(f'{user}')
+            # Add official screen name in place of user input
+            parsed = json.loads(user_data.text)
+            screen_name = parsed[0]['screen_name']
+            self.users.append(f'@{screen_name}')
             self.num_users += 1
             with open(f"./app/data/user_data_{user[1:]}_{self.uuid}.txt", "w") as user_file:
                 json.dump(user_data.text, user_file)
@@ -195,22 +198,27 @@ class TwitterGuessWho:
 
         return counts, users
 
-    def get_user_bio(self):
+    def get_user_bio(self,seed=0):
         """
         Get user bios from hydrated user object.
         """
         users = []
         bios = []
 
-        for user in self.users: 
-            with open(f"./app/data/user_data_{user[1:]}_{self.uuid}.txt", "rb") as user_file:
+        np.random.seed(seed)
+        random_order = np.arange(self.num_users)
+        np.random.shuffle(random_order)
+        for i in random_order:
+            random_user = self.users[i]
+            with open(f"./app/data/user_data_{random_user[1:]}_{self.uuid}.txt", "rb") as user_file:
                 data = json.load(user_file)
                 parsed = json.loads(data)
-                print("XXXXXXXXXXXXXXXXXXXXXX", parsed)
                 user = parsed[0]["screen_name"]
                 bio = parsed[0]["description"]
                 users.append(user)
                 bios.append(bio)
+        print(users)
+        print(bios)
 
         return bios, users
 
