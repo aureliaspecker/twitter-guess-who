@@ -115,3 +115,29 @@ class Followers_Ids:
         querystring = "{{\"screen_name\": \"{}\"}}".format(query)
         requests.get(self.url, params=querystring, auth=self.auth)
         return requests.get(self.url, params=querystring, auth=self.auth)
+
+
+class Random_Gif:
+    """
+    GIPHY API random gif endpoint.    
+    """
+
+    def __init__(self, authentication_key):
+        """
+        :param authentication_key: str, api key
+        """
+
+        self.url = f"https://api.giphy.com/v1/gifs/random?api_key={authentication_key}"
+
+
+    def __call__(self, tags):
+        """
+        :param tags: str, or list of string
+        :return: single gif object
+        """
+
+        if isinstance(tags,str):
+            url = self.url + "&tag=" + tags + '&limit=1'
+        elif isinstance(tags,list):
+            url = self.url + "&tag=" + '+'.join(tags) + '&limit=1'
+        return requests.get(url=url)

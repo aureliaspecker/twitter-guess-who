@@ -1,31 +1,18 @@
-<html>
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "parent.html" %}
+{% block title %}Round1{% endblock %}
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+{% block header %}
+    Your Score
+{% endblock %}
 
-        <!-- main.css -->
-        <link rel="icon" href="data:,">
-        <title>Score</title>
-    </head>
-    <body class="text-center">
-        <div class="col-md-2 container d-flex h-100">
-            <div  class="row justify-content-center align-self-center">
-                <main role="main" class="inner cover">
-                    {% block content %}
-                    <h1 class="cover-heading">Your Score</h1>
-                    <hr>
-                    {{score}}
-                    {% endblock %}
-                    <p>
-                        <a href={{next_page}} class="btn btn-lg btn-secondary">Go to next round</a>
-                    </p>
-                </main>
-            </div>
-     </div>
-    <div class=col-md-4></div>
- </body>
-</html>
+{% block paragraph %}
+    {{score}} / {{max_score}}
+{% endblock %}
+
+{% block content %}
+<p>
+    <a href={{next_page}} class="btn btn-lg btn-secondary">Go to next round</a>
+</p>
+<img src={{gif_url}} alt=”animated” />
+{% endblock %}
+

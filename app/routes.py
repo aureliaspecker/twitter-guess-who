@@ -1,16 +1,22 @@
 import os
 import sys
+import json
 from app import app
 from flask import render_template, flash, redirect
 from app.forms import InputUsersForm, SelectFormList
 from .server.twitter_guess_who import TwitterGuessWho
+from .server.api_handler import Random_Gif
 
 # Generate random secret key
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
+# Initialise GIPHY API
+random_gif = Random_Gif(authentication_key=os.getenv('GIPHY_KEY'))
+
 # Initialise game object
 tgw = TwitterGuessWho()
+
 
 @app.route('/')
 
@@ -105,8 +111,15 @@ def score():
     Displays score
     """
 
+    # Get player score and total possible score
     score = tgw.get_score()
-    return render_template('score.html', score=score, next_page=f"/round{tgw.next_round}")
+    max_score = tgw.num_users*(tgw.next_round-1)
+
+    # Generate gif based on result
+    relative_score = score/max_score
+    gif_tags = ['disaster','awkward',['pretty','good'],['nice','job'],'awesome'] # 0,0.25,0.5,0.75,1.0
+    gif_url = json.loads(random_gif(tags=gif_tags[int(relative_score/0.25)]).text)['data']['fixed_height_downsampled_url']
+    return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
 
 
 def construct_select_forms(users):
@@ -122,3 +135,5 @@ def construct_select_forms(users):
         form.select.choices = [(i,user) for i,user in enumerate(users)]
 
     return form_list
+
+
