@@ -217,10 +217,28 @@ class TwitterGuessWho:
                 bio = parsed[0]["description"]
                 users.append(user)
                 bios.append(bio)
-        print(users)
-        print(bios)
 
-        return bios, users
+        # Remove stop words (e.g. 'the', 'a') and punctuation
+        stop_words = set(stopwords.words('english'))
+        filtered_bios = [] 
+
+        for bio in bios: 
+
+            #Removes punctuation & makes lowercase
+            for p in punctuation: 
+                bio = bio.replace(p, "").lower() 
+
+            #Stores words from bio in a list
+            filtered_bio_pre_sorting = []
+            for word in bio.split(" "):
+                filtered_bio_pre_sorting.append(word)
+            
+            filtered_bio = filtered_bio_pre_sorting[::4] 
+            # Remove common words
+            filtered_words = [word for word in filtered_bio if not word in stop_words]
+            filtered_bios.append(" ".join(filtered_words))
+
+        return filtered_bios, users
 
     def round_tweet_counts(self):
         """
