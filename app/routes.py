@@ -117,7 +117,7 @@ def score():
 
     # Generate gif based on result
     relative_score = score/max_score
-    gif_tags = ['disaster','awkward',['pretty','good'],['nice','job'],'awesome'] # 0,0.25,0.5,0.75,1.0
+    gif_tags = ['disaster','bad','ok','awesome','epic'] # 0,0.25,0.5,0.75,1.0
     gif_url = json.loads(random_gif(tags=gif_tags[int(relative_score/0.25)]).text)['data']['fixed_height_downsampled_url']
     return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
 
