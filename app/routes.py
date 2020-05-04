@@ -105,6 +105,34 @@ def round2():
     return render_template('round2.html', title='Round2', n=num_users, form_list=form_list, user_bios=user_bios)
 
 
+@app.route('/round3', methods=['post', 'get'])
+def round3():
+    """
+    Third round of the game.
+    """
+
+    # Get data for this round
+    users = tgw.get_users()
+    num_users = len(users)
+    wordcloud_paths = tgw.make_user_wordclouds()
+
+    # Generate forms
+    form_list = construct_select_forms(users)
+
+    # # Get player answers
+    # if form_list.is_submitted():
+    #     points = 0
+    #     for i in range(num_users):
+    #         player_answer = users[int(form_list.select_forms.data[i]['select'])][1:]
+    #         correct_answer = jumbled_users[i]
+    #         if correct_answer==player_answer:
+    #             points += 1
+    #     tgw.update_score(points)
+    #     tgw.next_round += 1
+    #     return redirect('/score')
+    return render_template('round3.html', title='Round3', n=num_users, form_list=form_list, wc_paths = wordcloud_paths)
+
+
 @app.route('/score', methods=['get'])
 def score():
     """
@@ -116,7 +144,10 @@ def score():
     max_score = tgw.num_users*(tgw.next_round-1)
 
     # Generate gif based on result
-    relative_score = score/max_score
+    if score>0:
+        relative_score = score/max_score
+    else:
+        relative_score = 0
     gif_tags = ['disaster','bad','ok','awesome','epic'] # 0,0.25,0.5,0.75,1.0
     gif_url = json.loads(random_gif(tags=gif_tags[int(relative_score/0.25)]).text)['data']['fixed_height_downsampled_url']
     return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)

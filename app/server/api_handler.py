@@ -130,14 +130,14 @@ class Random_Gif:
         self.url = f"https://api.giphy.com/v1/gifs/random?api_key={authentication_key}"
 
 
-    def __call__(self, tags):
+    def __call__(self, tags, limit=1):
         """
         :param tags: str, or list of string
         :return: single gif object
         """
 
         if isinstance(tags,str):
-            url = self.url + "&tag=" + tags + '&limit=1'
+            url = self.url + "&tag=" + tags + f"&limit={limit}"
         elif isinstance(tags,list):
-            url = self.url + "&tag=" + '+'.join(tags) + '&limit=1'
+            url = self.url + "&tag=" + '+'.join(tags) + f"&limit={limit}"
         return requests.get(url=url)

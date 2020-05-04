@@ -159,7 +159,7 @@ class TwitterGuessWho:
         :return: 
         """
 
-        #Get Tweet counts for each user
+        # Get Tweet counts for each user
         with open(f"./app/data/tweet_counts_{self.uuid}.txt", "wb") as data_file:
             # Initiate empty dictionary
             counts_data = {} 
@@ -172,10 +172,26 @@ class TwitterGuessWho:
                     response = response.text
                     parsed = json.loads(response)
                     counts_data[user] = parsed["totalCount"]
-                    # Save data to text file
-                else: 
+                else:
                     raise ValueError("Unsuccessful API call")
             pickle.dump(counts_data, data_file)
+
+        # Get recent Tweets for each user
+        with open(f"./app/data/recent_search_{self.uuid}.txt", "wb") as data_file:
+            # Initiate empty dictionary
+            tweet_data = {}
+            # Get Tweets for each user
+            recent_search_data = Recent_Search_Data(self.auth)
+            for i,user in enumerate(self.users):
+                # Make API call
+                response = recent_search_data(f"from:{user[1:]} -is:retweet")
+                if response.status_code == 200:
+                    response = response.text
+                    parsed = json.loads(response)
+                    tweet_data[user] = [tweet["text"] for tweet in parsed["data"]]
+                else:
+                    raise ValueError("Unsuccessful API call")
+            pickle.dump(tweet_data, data_file)
 
 
     def get_tweet_counts(self,sort=True):
@@ -218,27 +234,37 @@ class TwitterGuessWho:
                 users.append(user)
                 bios.append(bio)
 
-        # Remove stop words (e.g. 'the', 'a') and punctuation
-        stop_words = set(stopwords.words('english'))
-        filtered_bios = [] 
-
-        for bio in bios: 
-
-            #Removes punctuation & makes lowercase
-            for p in punctuation: 
-                bio = bio.replace(p, "").lower() 
-
-            #Stores words from bio in a list
-            filtered_bio_pre_sorting = []
-            for word in bio.split(" "):
-                filtered_bio_pre_sorting.append(word)
-            
-            filtered_bio = filtered_bio_pre_sorting[::4] 
-            # Remove common words
-            filtered_words = [word for word in filtered_bio if not word in stop_words]
-            filtered_bios.append(" ".join(filtered_words))
+        # Clean bios of stop words etc. and extract every 4 words only
+        filtered_bios = self.clean_text(bios)
+        for i,bio in enumerate(filtered_bios):
+            filtered_bios[i] = " ".join(bio.split(" ")[::4]) # str->list->filter->str
 
         return filtered_bios, users
+
+
+    def clean_text(self,text_items):
+        """
+        Convert text to lowercase, remove stop words and punctuation.
+        :param text_items: list of str 
+        :return: list of str
+        """
+
+        stop_words = set(stopwords.words('english'))
+        text_cleaned = []
+
+        # Loop over text items
+        for text in text_items:
+
+            # Remove puntuation and make lowercase
+            text_no_punc = text
+            for p in punctuation:
+                text_no_punc = text_no_punc.replace(p,"").lower()
+            # Convert to list, remove common words and reform into string
+            text_clean = [word for word in text_no_punc.split(" ") if word not in stop_words]
+            text_cleaned.append(" ".join(text_clean))
+
+        return text_cleaned
+
 
     def round_tweet_counts(self):
         """
@@ -294,58 +320,33 @@ class TwitterGuessWho:
         console_text.write_dashes()
         
 
-    def round_word_cloud(self):
+    def make_user_wordclouds(self):
         """
-        Game round - Guess from wordcloud.
+        
         """
 
-        # Header
-        self.round_count += 1
-        console_text.write_round(self.round_count)
-        console_text.write_message("This is the word cloud round!\nYou must match the word cloud to each user.\nOne point for each correct answer!\n")
+        paths = []
+        with open(f"./app/data/recent_search_{self.uuid}.txt", "rb") as data_file:
+            # Load tweets from file
+            tweet_data = pickle.load(data_file)
 
-        recent_search_data = Recent_Search_Data(self.auth)
-        stop_words = set(stopwords.words('english'))
+            # Loop over users and make word cloud from tweets
+            for user in self.users:
+                # Clean up tweets and combine
+                tweets = tweet_data[user]
+                cleaned_tweets = self.clean_text(tweets)
+                combined_tweets = " ".join(cleaned_tweets)
 
-        for user in self.users:
-            
-            #Gets data for each user
-            response = recent_search_data(f"from:{user[1:]} -is:retweet")
-            parsed = json.loads(response.text)
-            tweet_text = [tweet["text"] for tweet in parsed["data"]]
-            
-            all_words = []
+                # Make word cloud
+                path = f'./app/static/img/wordcloud_{user}_{self.uuid}.png'
+                twitter_wordcloud = WordCloud(width=480,height=480,margin=0,
+                                              colormap="coolwarm",max_words=100).generate(combined_tweets)
+                plt.imshow(twitter_wordcloud, interpolation='bilinear')
+                plt.axis("off")
+                plt.margins(x=0, y=0)
+                plt.savefig(path,bbox_inches=None)
+                plt.close()
+                paths.append(path)
 
-            for text in tweet_text:
+        return paths
 
-                #Removes punctuation & makes lowercase
-                for p in punctuation: 
-                    text = text.replace(p, "").lower()
-                
-                #Stores all the words in a list
-                for word in text.split(" "):
-                    all_words.append(word)
-
-            # Remove common words
-            filtered_words_list = [word for word in all_words if not word in stop_words]
-            filtered_words = " ".join(filtered_words_list)
-            print(filtered_words)
-
-        # Generate wordcloud for each user
-        twitter_wordcloud = WordCloud(
-            width=480, 
-            height=480, 
-            margin=0, 
-            colormap="coolwarm", 
-            max_words=100
-        ).generate(filtered_words)
-
-        # Display the generated image:
-        plt.imshow(twitter_wordcloud, interpolation='bilinear')
-        plt.axis("off")
-        plt.margins(x=0, y=0)
-        plt.show()
-
-        # ToDo --> Scores 
-
-        console_text.write_dashes()
