@@ -141,3 +141,30 @@ class Random_Gif:
         elif isinstance(tags,list):
             url = self.url + "&tag=" + '+'.join(tags) + f"&limit={limit}"
         return requests.get(url=url)
+
+
+class Search_Gif:
+    """
+    GIPHY API search gif endpoint.
+    """
+
+
+    def __init__(self, authentication_key):
+        """
+        :param authentication_key: str, api key
+        """
+
+        self.url = f"https://api.giphy.com/v1/gifs/search?api_key={authentication_key}"
+
+
+    def __call__(self, query, limit=10, rating='g', lang='en'):
+        """
+        :param query: gif tags
+        :param limit: number of gifs
+        :param rating: content suitability rating
+        :param lang: language
+        :return: json response containing list of gifs 
+        """
+
+        url = f'{self.url}&q={query}&limit={limit}&rating={rating}&lang={lang}'
+        return requests.get(url=url)

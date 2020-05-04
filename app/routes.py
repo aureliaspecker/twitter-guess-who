@@ -3,9 +3,10 @@ import sys
 import json
 from app import app
 from flask import render_template, flash, redirect
+from pprint import pprint
 from app.forms import InputUsersForm, SelectFormList
 from .server.twitter_guess_who import TwitterGuessWho
-from .server.api_handler import Random_Gif
+from .server.api_handler import Random_Gif, Search_Gif
 
 # Generate random secret key
 SECRET_KEY = os.urandom(32)
@@ -13,6 +14,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 # Initialise GIPHY API
 random_gif = Random_Gif(authentication_key=os.getenv('GIPHY_KEY'))
+search_gif = Search_Gif(authentication_key=os.getenv('GIPHY_KEY'))
 
 # Initialise game object
 tgw = TwitterGuessWho()
@@ -141,7 +143,8 @@ def score():
 
     # Get player score and total possible score
     score = tgw.get_score()
-    max_score = tgw.num_users*(tgw.next_round-1)
+    rounds_played = tgw.next_round - 1
+    max_score = tgw.num_users*rounds_played
 
     # Generate gif based on result
     if score>0:
@@ -149,7 +152,7 @@ def score():
     else:
         relative_score = 0
     gif_tags = ['disaster','bad','ok','awesome','epic'] # 0,0.25,0.5,0.75,1.0
-    gif_url = json.loads(random_gif(tags=gif_tags[int(relative_score/0.25)]).text)['data']['fixed_height_downsampled_url']
+    gif_url = json.loads(search_gif(query=gif_tags[int(relative_score/0.25)]).text)['data'][rounds_played]['images']['fixed_height']['url']
     return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
 
 
