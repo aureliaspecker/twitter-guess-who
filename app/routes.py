@@ -116,7 +116,8 @@ def round3():
     # Get data for this round
     users = tgw.get_users()
     num_users = len(users)
-    wordcloud_paths = tgw.make_user_wordclouds()
+    # wordcloud_paths = tgw.make_user_wordclouds()
+    wordcloud_paths = tgw.get_paths()
 
     # Generate forms
     form_list = construct_select_forms(users)

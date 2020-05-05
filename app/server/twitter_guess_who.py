@@ -193,6 +193,11 @@ class TwitterGuessWho:
                     raise ValueError("Unsuccessful API call")
             pickle.dump(tweet_data, data_file)
 
+        self.paths = self.make_user_wordclouds()
+
+    def get_paths(self): 
+        return self.paths
+
 
     def get_tweet_counts(self,sort=True):
         """
@@ -338,7 +343,9 @@ class TwitterGuessWho:
                 combined_tweets = " ".join(cleaned_tweets)
 
                 # Make word cloud
-                path = f'./app/static/img/wordcloud_{user}_{self.uuid}.png'
+                base = './app/static/'
+                image = f'img/wordcloud_{user[1:]}_{self.uuid}.png'
+                path = f'{base}{image}'
                 twitter_wordcloud = WordCloud(width=480,height=480,margin=0,
                                               colormap="coolwarm",max_words=100).generate(combined_tweets)
                 plt.imshow(twitter_wordcloud, interpolation='bilinear')
@@ -346,7 +353,7 @@ class TwitterGuessWho:
                 plt.margins(x=0, y=0)
                 plt.savefig(path,bbox_inches=None)
                 plt.close()
-                paths.append(path)
+                paths.append(image)
 
         return paths
 

@@ -16,9 +16,8 @@
         {{ form_list.hidden_tag() }}
     <ol type="a">
         {% for i in range(0, n) %}
-
-        <img src={{wc_paths[i]}} alt="Wordcloud">
-
+            {{form_list.select_forms[i].select.label}} {{form_list.select_forms[i].select}}
+            <img src="{{url_for('static', filename=wc_paths[i])}}" />
         {% endfor %}
     </ol>
         <input class="btn btn-lg btn-secondary" type="submit" value="Submit">
