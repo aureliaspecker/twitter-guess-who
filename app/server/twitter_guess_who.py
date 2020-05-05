@@ -1,10 +1,7 @@
-import glob
 import json
-import time
 from string import punctuation
 import numpy as np
-from nltk.corpus import stopwords
-from wordcloud import WordCloud
+from wordcloud import WordCloud, STOPWORDS
 from matplotlib import pyplot as plt
 import shortuuid
 import pickle5 as pickle
@@ -188,7 +185,9 @@ class TwitterGuessWho:
         :return: list of str
         """
 
-        stop_words = set(stopwords.words('english'))
+        # stop_words = set(stopwords.words('english'))
+        stop_words = set(STOPWORDS)
+        stop_words.add('&amp')
         text_cleaned = []
 
         # Loop over text items
@@ -223,17 +222,17 @@ class TwitterGuessWho:
                 combined_tweets = " ".join(cleaned_tweets)
 
                 # Make word cloud
-                base = './app/static/'
-                image = f'img/wordcloud_{user[1:]}_{self.uuid}.png'
-                path = f'{base}{image}'
-                twitter_wordcloud = WordCloud(width=480,height=480,margin=0,
-                                              colormap="coolwarm",max_words=100).generate(combined_tweets)
+                static_path = './app/static/'
+                image_path = f'img/wordcloud_{user[1:]}_{self.uuid}.png'
+                path = f'{static_path}{image_path}'
+                twitter_wordcloud = WordCloud(width=480,height=480,margin=0,background_color="white",
+                                              colormap="Blues",max_words=100).generate(combined_tweets)
                 plt.imshow(twitter_wordcloud, interpolation='bilinear')
                 plt.axis("off")
                 plt.margins(x=0, y=0)
-                plt.savefig(path,bbox_inches=None)
+                plt.savefig(path,bbox_inches='tight',dpi=200)
                 plt.close()
-                paths.append(image)
+                paths.append(image_path)
 
         return paths
 
