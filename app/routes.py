@@ -43,9 +43,10 @@ def setup():
         else: 
             user_exists = tgw.add_user(form.username.data)
             if user_exists:
-                flash('User added: {}'.format(tgw.users[-1]))
+                flash('User added')
             else:
                 flash('User does not exist: {}'.format(form.username.data))
+            flash('Users: '+', '.join(tgw.get_users()))
             return redirect('/setup')
     return render_template('setup.html', title='Setup', form=form, next_page=f"/round{tgw.next_round}")
 
