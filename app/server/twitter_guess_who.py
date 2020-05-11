@@ -113,7 +113,11 @@ class TwitterGuessWho:
                 if response.status_code == 200:
                     response = response.text
                     parsed = json.loads(response)
-                    tweet_data[user] = [tweet["text"] for tweet in parsed["data"]]
+                    # Twitter Labs endpoint subject to change
+                    try: 
+                        tweet_data[user] = [tweet["text"] for tweet in parsed["data"]]
+                    except: 
+                        tweet_data[user] = ["Hasottweetedinthepastweek(naughty!)"]
                 else:
                     raise ValueError("Unsuccessful API call")
             pickle.dump(tweet_data, data_file)
