@@ -15,7 +15,7 @@
 		{% endblock %}
     </head>
     <body class="text-center">
-        <div class="col-md-2 container d-flex h-100">
+        <div class="col-md-2 container d-flex h-50">
             <div class="row justify-content-center align-self-center">
                 <main role="main" class="inner cover">
                     <h1 class="cover-heading">{% block header %}{% endblock %}</h1>
@@ -24,5 +24,6 @@
                 </main>
             </div>
         </div>
+        {% block custom %}{% endblock %} 
     </body>
 </html>

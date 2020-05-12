@@ -117,7 +117,7 @@ class TwitterGuessWho:
                     try: 
                         tweet_data[user] = [tweet["text"] for tweet in parsed["data"]]
                     except: 
-                        tweet_data[user] = ["Hasottweetedinthepastweek(naughty!)"]
+                        tweet_data[user] = ["Hasnottweetedinthepastweek(naughty!)"]
                 else:
                     raise ValueError("Unsuccessful API call")
             pickle.dump(tweet_data, data_file)

@@ -12,22 +12,23 @@
 {% endblock %}
 
 {% block content %}
+{% endblock %}
+
+{% block custom %}
+<div class="container-fluid">
     <form action="" method="post" novalidate>
         {{ form_list.hidden_tag() }}
-    <ol type="a">
+    <div class="row">
         {% for i in range(0, n) %}
-            <img src="{{url_for('static', filename=wc_paths[i])}}" height="400"/>
+            <div class="col-sm">  
+            <img src="{{url_for('static', filename=wc_paths[i])}}" height="300"/>
             {{form_list.select_forms[i].select.label}} {{form_list.select_forms[i].select}}
+            </div>
         {% endfor %}
-    </ol>
-        <input class="btn btn-lg btn-primary" type="submit" value="Submit">
+    </div>
+    <br>
+    <input class="btn btn-lg btn-primary" type="submit" value="Submit">
     </form>
-    <hr>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-        <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
+</div>
 {% endblock %}
+
