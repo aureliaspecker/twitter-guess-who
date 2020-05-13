@@ -144,12 +144,14 @@ def round3():
         return redirect('/score')
     return render_template('round3.html', title='Round3', n=num_users, form_list=form_list, wc_paths = wordcloud_shuffle)
 
+
 @app.route('/error', methods=['get'])
 def error():
     """
     Notifies user of an error if the API call was unsuccessful
     """
     return render_template('error.html')
+
 
 @app.route('/score', methods=['get'])
 def score():
@@ -174,14 +176,18 @@ def score():
         gif_url = 'https://media.giphy.com/media/eYilisUwipOEM/giphy.gif' 
     return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
 
+
 @app.route('/round4', methods=['get'])
 def goodbye():
     """
     Closing page
     """
+
+    tgw.clear_data_files()
     gif_tags = ['see you next time']
     gif_url = json.loads(search_gif(query=gif_tags).text)['data'][0]['images']['fixed_height']['url']
     return render_template('goodbye.html', gif_url=gif_url)
+
 
 def construct_select_forms(users):
     """

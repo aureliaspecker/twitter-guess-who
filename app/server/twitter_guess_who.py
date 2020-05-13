@@ -1,6 +1,8 @@
 import json
 from string import punctuation
 import numpy as np
+import os
+import glob
 from wordcloud import WordCloud, STOPWORDS
 from matplotlib import pyplot as plt
 import shortuuid
@@ -89,6 +91,15 @@ class TwitterGuessWho:
         shuffle = np.arange(self.num_users)
         np.random.shuffle(shuffle)
         return shuffle
+
+
+    def clear_data_files(self):
+        """
+        Delete temporary data files.
+        """
+        files = glob.glob('./app/data/*{}*.txt'.format(self.uuid))
+        for f in files:
+            os.remove(f)
 
 
     def make_api_calls(self):
