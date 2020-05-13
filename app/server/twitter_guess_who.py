@@ -26,6 +26,8 @@ class TwitterGuessWho:
         self.uuid = shortuuid.uuid()
         self.score = 0
         self.next_round = 1
+        # Random seed so numbers change per game, but not between page reloads
+        self.random_seed = np.random.randint(0,100)
 
 
     def add_user(self,user):
@@ -76,6 +78,17 @@ class TwitterGuessWho:
         :return: int, score
         """
         return self.score
+
+
+    def get_index_shuffle(self,offset=0):
+        """
+        Get a shuffle of indices of same length as number of users.
+        :return: list of int
+        """
+        np.random.seed(self.random_seed+offset)
+        shuffle = np.arange(self.num_users)
+        np.random.shuffle(shuffle)
+        return shuffle
 
 
     def make_api_calls(self):
@@ -154,16 +167,14 @@ class TwitterGuessWho:
         return counts, users
 
 
-    def get_user_bio(self,seed=0):
+    def get_user_bio(self):
         """
         Get user bios from hydrated user object.
         """
         users = []
         bios = []
 
-        np.random.seed(seed)
-        random_order = np.arange(self.num_users)
-        np.random.shuffle(random_order)
+        random_order = self.get_index_shuffle(1)
         for i in random_order:
             random_user = self.users[i]
             with open(f"./app/data/user_data_{random_user[1:]}_{self.uuid}.txt", "rb") as user_file:

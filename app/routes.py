@@ -89,7 +89,7 @@ def round2():
     # Get data for this round
     users = tgw.get_users()
     num_users = len(users)
-    user_bios, jumbled_users = tgw.get_user_bio(seed=0)
+    user_bios, jumbled_users = tgw.get_user_bio()
 
     #Generate forms
     form_list = construct_select_forms(users)
@@ -119,6 +119,11 @@ def round3():
     num_users = len(users)
     wordcloud_paths = tgw.get_wordcloud_paths()
 
+    # Randomise order
+    shuffle = tgw.get_index_shuffle()
+    user_shuffle = [users[i][1:] for i in shuffle]
+    wordcloud_shuffle = [wordcloud_paths[i] for i in shuffle]
+
     # Generate forms
     form_list = construct_select_forms(users)
 
@@ -128,14 +133,14 @@ def round3():
         for i in range(num_users):
             player_answer = users[int(form_list.select_forms.data[i]['select'])][1:]
             print("player answer:", player_answer)
-            correct_answer = users[i][1:]
+            correct_answer = user_shuffle[i]
             print("correct anwer:", correct_answer)
             if correct_answer==player_answer:
                 points += 1
         tgw.update_score(points)
         tgw.next_round += 1
         return redirect('/score')
-    return render_template('round3.html', title='Round3', n=num_users, form_list=form_list, wc_paths = wordcloud_paths)
+    return render_template('round3.html', title='Round3', n=num_users, form_list=form_list, wc_paths = wordcloud_shuffle)
 
 
 @app.route('/score', methods=['get'])
