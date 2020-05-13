@@ -111,7 +111,7 @@ class TwitterGuessWho:
                     parsed = json.loads(response)
                     counts_data[user] = parsed["totalCount"]
                 else:
-                    raise ValueError("Unsuccessful API call")
+                    return False, response.status_code
             pickle.dump(counts_data, data_file)
 
         # Get recent Tweets for each user
@@ -132,10 +132,12 @@ class TwitterGuessWho:
                     except: 
                         tweet_data[user] = ["Hasnottweetedinthepastweek(naughty!)"]
                 else:
-                    raise ValueError("Unsuccessful API call")
+                    return False, response.status_code
+                    
             pickle.dump(tweet_data, data_file)
         # Store paths to wordcloud images
         self.wordcloud_paths = self.make_wordclouds()
+        return True, 200
 
 
     def get_wordcloud_paths(self):

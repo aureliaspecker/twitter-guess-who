@@ -58,7 +58,9 @@ def round1():
     """
 
     # Make API calls for entire game in first round (check for rate limits etc.)
-    tgw.make_api_calls()
+    api_call_successful, status_code = tgw.make_api_calls()
+    if not api_call_successful:
+        return redirect('/error')
 
     # Get data for this round
     users = tgw.get_users()
@@ -142,6 +144,12 @@ def round3():
         return redirect('/score')
     return render_template('round3.html', title='Round3', n=num_users, form_list=form_list, wc_paths = wordcloud_shuffle)
 
+@app.route('/error', methods=['get'])
+def error():
+    """
+    Notifies user of an error if the API call was unsuccessful
+    """
+    return render_template('error.html')
 
 @app.route('/score', methods=['get'])
 def score():
@@ -160,9 +168,20 @@ def score():
     else:
         relative_score = 0
     gif_tags = ['disaster','bad','ok','awesome','epic'] # 0,0.25,0.5,0.75,1.0
-    gif_url = json.loads(search_gif(query=gif_tags[int(relative_score/0.25)]).text)['data'][rounds_played]['images']['fixed_height']['url']
+    try: 
+        gif_url = json.loads(search_gif(query=gif_tags[int(relative_score/0.25)]).text)['data'][rounds_played]['images']['fixed_height']['url']
+    except: 
+        gif_url = 'https://media.giphy.com/media/eYilisUwipOEM/giphy.gif' 
     return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
 
+@app.route('/round4', methods=['get'])
+def goodbye():
+    """
+    Closing page
+    """
+    gif_tags = ['see you next time']
+    gif_url = json.loads(search_gif(query=gif_tags).text)['data'][0]['images']['fixed_height']['url']
+    return render_template('goodbye.html', gif_url=gif_url)
 
 def construct_select_forms(users):
     """
@@ -177,5 +196,7 @@ def construct_select_forms(users):
         form.select.choices = [(i,user) for i,user in enumerate(users)]
 
     return form_list
+
+ 
 
 
