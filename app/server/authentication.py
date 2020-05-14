@@ -1,6 +1,5 @@
 import os
-from requests_oauthlib import OAuth1
-
+from requests_oauthlib import OAuth1, OAuth1Session
 
 class Authentication:
     """
@@ -17,6 +16,7 @@ class Authentication:
         self.TOKEN_SECRET = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
         self.BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN")
         self.ENV = os.getenv("TWITTER_ENV")
+        self.fetch_request_token()
 
 
     def generate_oauth1(self):
@@ -46,4 +46,21 @@ class Authentication:
         Write access formatted keys and tokens. 
         :return: str 
         """
-        return f"Consumer key: {self.CONSUMER_KEY} \nConsumer secret: {self.CONSUMER_SECRET} \nAccess token: {self.ACCESS_TOKEN} \nToken secret: {self.TOKEN_SECRET} \nBearer token: {self.BEARER_TOKEN}"
+        return f"Consumer key: {self.CONSUMER_KEY} \nConsumer secret: {self.CONSUMER_SECRET} \nAccess token: {self.ACCESS_TOKEN} \nToken secret: {self.TOKEN_SECRET} \nBearer token: {self.BEARER_TOKEN} \nRequset token: {self.oauth_token}"
+
+    def fetch_request_token(self):
+        """
+        Fetches request token (step 1 of sign-in-with-twitter process)
+        """
+        auth = OAuth1Session(client_key=self.CONSUMER_KEY, client_secret=self.CONSUMER_SECRET) 
+        url = "https://api.twitter.com/oauth/request_token"
+        request_token_object = (auth.get(url))
+        request_token_text = str.split(request_token_object.text, '&') 
+        self.oauth_token = str.split(request_token_text[0], '=')[1]
+    
+    def get_sign_in_url(self):
+        """
+        Generates URL to redirect user to sign in with twitter
+        """
+        url = f"https://api.twitter.com/oauth/authorize?oauth_token={self.oauth_token}"
+        return url

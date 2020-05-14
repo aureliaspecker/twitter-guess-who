@@ -1,7 +1,6 @@
 import requests
 import datetime as dt
 
-
 class Users_Lookup:
     """
     Get fully hydrated user obejects.

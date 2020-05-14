@@ -7,7 +7,6 @@ from wordcloud import WordCloud, STOPWORDS
 from matplotlib import pyplot as plt
 import shortuuid
 import pickle5 as pickle
-from .authentication import Authentication
 from .api_handler import Users_Lookup, Search_Counts, Recent_Search_Data
 
 class TwitterGuessWho:
@@ -16,13 +15,13 @@ class TwitterGuessWho:
     """
 
 
-    def __init__(self,**kwargs):
+    def __init__(self, auth):
         """
         Initialise game parameters.
         """
 
         # Authentication
-        self.auth = Authentication()
+        self.auth = auth
         self.users = []
         self.num_users = 0
         self.uuid = shortuuid.uuid()

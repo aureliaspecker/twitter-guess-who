@@ -2,6 +2,7 @@ import os
 import sys
 import json
 from app import app
+from .server.authentication import Authentication
 from flask import render_template, flash, redirect
 from pprint import pprint
 from app.forms import InputUsersForm, SelectFormList
@@ -11,13 +12,14 @@ from .server.api_handler import Random_Gif, Search_Gif
 # Generate random secret key
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
+auth = Authentication()
 
 # Initialise GIPHY API
 random_gif = Random_Gif(authentication_key=os.getenv('GIPHY_KEY'))
 search_gif = Search_Gif(authentication_key=os.getenv('GIPHY_KEY'))
 
 # Initialise game object
-tgw = TwitterGuessWho()
+tgw = TwitterGuessWho(auth)
 
 
 @app.route('/')
@@ -28,7 +30,8 @@ def index():
     """
     Home page.
     """
-    return render_template('index.html', title='Home')
+    signin = auth.get_sign_in_url()
+    return render_template('index.html', title='Home', sign_in_url=signin)
 
 
 @app.route('/setup',methods=['post','get'])
