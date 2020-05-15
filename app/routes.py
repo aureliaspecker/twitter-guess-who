@@ -3,7 +3,7 @@ import sys
 import json
 from app import app
 from .server.authentication import Authentication
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request
 from pprint import pprint
 from app.forms import InputUsersForm, SelectFormList
 from .server.twitter_guess_who import TwitterGuessWho
@@ -33,12 +33,22 @@ def index():
     signin = auth.get_sign_in_url()
     return render_template('index.html', title='Home', sign_in_url=signin)
 
+@app.route('/start', methods=['post', 'get'])
+def start():
+    """
+    Callback to redirect user with SIWT
+    """
+    # Get oauth_token and oauth_verifer for SIWT and generate user tokens
+    auth.generate_user_tokens(request.full_path)
+
+    return render_template('start.html')
 
 @app.route('/setup',methods=['post','get'])
 def setup():
     """
     Page to get user handles from player.
     """
+
     form = InputUsersForm()
     if form.validate_on_submit():
         if tgw.num_users == 6: 
