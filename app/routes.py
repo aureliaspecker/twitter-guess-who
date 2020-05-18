@@ -137,7 +137,7 @@ def round3():
     wordcloud_paths = tgw.get_wordcloud_paths()
 
     # Randomise order
-    shuffle = tgw.get_index_shuffle()
+    shuffle = tgw.get_shuffle()
     user_shuffle = [users[i][1:] for i in shuffle]
     wordcloud_shuffle = [wordcloud_paths[i] for i in shuffle]
 
@@ -178,6 +178,7 @@ def score():
     score = tgw.get_score()
     rounds_played = tgw.next_round - 1
     max_score = tgw.num_users*rounds_played
+    random_gif_id = tgw.get_uniform_random_integer()
 
     # Generate gif based on result
     if score>0:
@@ -185,11 +186,12 @@ def score():
     else:
         relative_score = 0
     gif_tags = ['disaster','bad','ok','awesome','epic'] # 0,0.25,0.5,0.75,1.0
-    try: 
-        gif_url = json.loads(search_gif(query=gif_tags[int(relative_score/0.25)]).text)['data'][rounds_played]['images']['fixed_height']['url']
-    except: 
-        gif_url = 'https://media.giphy.com/media/eYilisUwipOEM/giphy.gif' 
-    return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
+    try:
+        gifs = search_gif(query=gif_tags[int(relative_score/0.25)],limit=100)
+        gif_url = json.loads(gifs.text)['data'][random_gif_id]['images']['fixed_height']['url']
+    except:
+        gif_url = 'https://media.giphy.com/media/eYilisUwipOEM/giphy.gif'
+    greturn render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
 
 
 @app.route('/round4', methods=['get'])
