@@ -41,20 +41,28 @@ class TwitterGuessWho:
         if user[0] != '@':
             user = f'@{user}'
 
-        # Check if user exists and store
-        user_lookup = Users_Lookup(self.auth)
-        user_data = user_lookup(user[1:])
-        user_exists = user_data.status_code == 200
-        if user_exists:
-            # Add official screen name in place of user input
-            parsed = json.loads(user_data.text)
-            screen_name = parsed[0]['screen_name']
-            self.users.append(f'@{screen_name}')
-            self.num_users += 1
-            with open(f"./app/data/user_data_{user[1:]}_{self.uuid}.txt", "w") as user_file:
-                json.dump(user_data.text, user_file)
+        # Prevent duplicate entries
+        error_code = 0
+        if user in self.users:
+            error_code = 1
 
-        return user_exists
+        # Check if user exists and store
+        if error_code == 0:
+            user_lookup = Users_Lookup(self.auth)
+            user_data = user_lookup(user[1:])
+            user_exists = user_data.status_code == 200
+            if user_exists:
+                # Add official screen name in place of user input
+                parsed = json.loads(user_data.text)
+                screen_name = parsed[0]['screen_name']
+                self.users.append(f'@{screen_name}')
+                self.num_users += 1
+                with open(f"./app/data/user_data_{user[1:]}_{self.uuid}.txt", "w") as user_file:
+                    json.dump(user_data.text, user_file)
+            else:
+                error_code = 2
+
+        return error_code
 
 
     def get_users(self):
