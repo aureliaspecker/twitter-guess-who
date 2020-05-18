@@ -191,7 +191,7 @@ def score():
         gif_url = json.loads(gifs.text)['data'][random_gif_id]['images']['fixed_height']['url']
     except:
         gif_url = 'https://media.giphy.com/media/eYilisUwipOEM/giphy.gif'
-    greturn render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
+    return render_template('score.html', score=score, max_score=max_score, next_page=f"/round{tgw.next_round}", gif_url=gif_url)
 
 
 @app.route('/round4', methods=['get'])
