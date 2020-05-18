@@ -1,5 +1,11 @@
 # Twitter Guess Who
 
+"Twitter Guess Who" is a game that uses the Twitter API to test your knowledge on users of your choice. The game constitutes of three rounds: 
+
+1. **Tweet count round**: where you have to guess the number of Tweets sent in the last month by a list of users of your choice. 
+2. **Bio round**: where you have to match users to the correct list of keywords from their bios. 
+3. **Wordcloud round**: where you have to match users to the correct wordcloud (generated from Tweets sent in the last seven days).
+
 ## Authentication
 Authentication is handled in `app/server/authentication.py` 
 
