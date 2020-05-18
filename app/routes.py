@@ -63,7 +63,7 @@ def setup():
                 flash('User does not exist: {}'.format(form.username.data))
             flash('Users: '+', '.join(tgw.get_users()))
             return redirect('/setup')
-    return render_template('setup.html', title='Setup', form=form, next_page=f"/round{tgw.next_round}")
+    return render_template('setup.html', title='Setup', form=form, next_page=f"/round{tgw.next_round}", num_users=tgw.num_users)
 
 
 @app.route('/round1',methods=['post','get'])

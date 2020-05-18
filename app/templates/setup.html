@@ -27,5 +27,8 @@
     </p>
     {% endif %}
     {% endwith %}
-    <a href={{next_page}} class="btn btn-lg btn-primary">Go to first round</a>
+
+    {% if num_users != 0 %}
+        <a href={{next_page}} class="btn btn-lg btn-primary">Go to first round</a>
+    {% endif %}
 {% endblock %}
