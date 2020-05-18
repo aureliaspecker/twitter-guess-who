@@ -89,7 +89,7 @@ class TwitterGuessWho:
         return self.score
 
 
-    def get_index_shuffle(self,offset=0):
+    def get_shuffle(self, offset=0):
         """
         Get a shuffle of indices of same length as number of users.
         :return: list of int
@@ -98,6 +98,16 @@ class TwitterGuessWho:
         shuffle = np.arange(self.num_users)
         np.random.shuffle(shuffle)
         return shuffle
+
+
+    def get_uniform_random_integer(self, lb=0, ub=100):
+        """
+        Get a random integer.
+        :param lb: int, lower bound
+        :param ub: int, upper bound
+        :return: int, random uniformly generated in range
+        """
+        return np.random.randint(lb,ub)
 
 
     def clear_data_files(self):
@@ -194,7 +204,7 @@ class TwitterGuessWho:
         users = []
         bios = []
 
-        random_order = self.get_index_shuffle(1)
+        random_order = self.get_shuffle(1)
         for i in random_order:
             random_user = self.users[i]
             with open(f"./app/data/user_data_{random_user[1:]}_{self.uuid}.txt", "rb") as user_file:
@@ -223,6 +233,7 @@ class TwitterGuessWho:
         # stop_words = set(stopwords.words('english'))
         stop_words = set(STOPWORDS)
         stop_words.add('&amp')
+        stop_words.add('amp')
         text_cleaned = []
 
         # Loop over text items
