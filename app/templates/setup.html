@@ -1,4 +1,16 @@
 {% extends "parent.html" %}
+
+{% block js %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+    $(function() {
+      $('a#button_alert').bind('click', function() {
+          alert("Just fetching some data... /n Click OK to continue.");
+          });
+          });
+</script>
+{% endblock %}
+
 {% block title %}Setup{% endblock %}
 
 {% block header %}
@@ -29,6 +41,6 @@
     {% endwith %}
 
     {% if num_users != 0 %}
-        <a href={{next_page}} class="btn btn-lg btn-primary">Go to first round</a>
+        <a href={{next_page}} id=button_alert class="btn btn-lg btn-primary">Go to first round</a>
     {% endif %}
 {% endblock %}

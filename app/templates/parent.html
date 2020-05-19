@@ -10,6 +10,10 @@
         <!-- main.css -->
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main.css')}}" media="screen"/>
         <link rel="icon" href="data:,">
+
+        <!--JS block-->
+        {% block js %}{% endblock %}
+
         <title>{% block title %}{% endblock %}</title>
         {% block head %}			
 		{% endblock %}
