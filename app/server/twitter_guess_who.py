@@ -158,11 +158,12 @@ class TwitterGuessWho:
                     try: 
                         tweet_data[user] = [tweet["text"] for tweet in parsed["data"]]
                     except: 
-                        tweet_data[user] = ["Hasnottweetedinthepastweek(naughty!)"]
+                        tweet_data[user] = None
                 else:
                     return False, response.status_code
                     
             pickle.dump(tweet_data, data_file)
+
         # Store paths to wordcloud images
         self.wordcloud_paths = self.make_wordclouds()
         return True, 200
@@ -262,22 +263,28 @@ class TwitterGuessWho:
 
             # Loop over users and make word cloud from tweets
             for user in self.users:
-                # Clean up tweets and combine
-                tweets = tweet_data[user]
-                cleaned_tweets = self.clean_text(tweets)
-                combined_tweets = " ".join(cleaned_tweets)
 
-                # Make word cloud
+                # Get user Tweets
+                tweets = tweet_data[user]
+
+                # Make word cloud or use default image
                 static_path = './app/static/'
-                image_path = f'img/wordcloud_{user[1:]}_{self.uuid}.png'
-                path = f'{static_path}{image_path}'
-                twitter_wordcloud = WordCloud(width=480,height=480,margin=0,background_color="white",
+                if tweets is not None:
+                    # Clean tweets and combine into single string
+                    cleaned_tweets = self.clean_text(tweets)
+                    combined_tweets = " ".join(cleaned_tweets)
+                    # Make wordcloud and save to static image directory
+                    image_path = f'img/wordcloud_{user[1:]}_{self.uuid}.png'
+                    path = f'{static_path}{image_path}'
+                    twitter_wordcloud = WordCloud(width=480,height=480,margin=0,background_color="white",
                                               colormap="Blues",max_words=100).generate(combined_tweets)
-                plt.imshow(twitter_wordcloud, interpolation='bilinear')
-                plt.axis("off")
-                plt.margins(x=0, y=0)
-                plt.savefig(path,bbox_inches='tight',dpi=200)
-                plt.close()
+                    plt.imshow(twitter_wordcloud, interpolation='bilinear')
+                    plt.axis("off")
+                    plt.margins(x=0, y=0)
+                    plt.savefig(path,bbox_inches='tight',dpi=200)
+                    plt.close()
+                else:
+                    image_path = 'img/larry_wordcloud.png'
                 paths.append(image_path)
 
         return paths
