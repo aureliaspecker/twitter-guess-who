@@ -2,20 +2,18 @@ import os
 import sys
 import json
 from app import app
-from .server.authentication import Authentication
 from flask import render_template, flash, redirect, request
-from pprint import pprint
 from app.forms import InputUsersForm, SelectFormList
+from .server.authentication import Authentication
 from .server.twitter_guess_who import TwitterGuessWho
-from .server.api_handler import Random_Gif, Search_Gif
+from .server.api_handler import Search_Gif
 
-# Generate random secret key
+# Setup auth and security
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 auth = Authentication()
 
 # Initialise GIPHY API
-random_gif = Random_Gif(authentication_key=os.getenv('GIPHY_KEY'))
 search_gif = Search_Gif(authentication_key=os.getenv('GIPHY_KEY'))
 
 # Initialise game object
@@ -33,15 +31,17 @@ def index():
     signin = auth.get_sign_in_url()
     return render_template('index.html', title='Home', sign_in_url=signin)
 
+
 @app.route('/start', methods=['post', 'get'])
 def start():
     """
-    Callback to redirect user with SIWT
+    Callback to redirect user with Sign-In-With-Twitter
     """
     # Get oauth_token and oauth_verifer for SIWT and generate user tokens
     auth.generate_user_tokens(request.full_path)
 
-    return render_template('start.html')
+    return render_template('start.html', player_name=auth.SCREEN_NAME)
+
 
 @app.route('/setup',methods=['post','get'])
 def setup():
