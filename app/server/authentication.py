@@ -54,16 +54,18 @@ class Authentication:
         """
         return f"Consumer key: {self.CONSUMER_KEY} \nConsumer secret: {self.CONSUMER_SECRET} \nAccess token: {self.ACCESS_TOKEN} \nToken secret: {self.TOKEN_SECRET} \nBearer token: {self.BEARER_TOKEN} \nRequset token: {self.oauth_token}"
 
+
     def fetch_request_token(self):
         """
         Fetches request token (step 1 of sign-in-with-twitter process)
         """
         auth = self.generate_oauth1_session() 
         url = "https://api.twitter.com/oauth/request_token"
-        request_token_object = (auth.get(url))
-        request_token_text = str.split(request_token_object.text, '&') 
-        self.oauth_token = str.split(request_token_text[0], '=')[1]
-    
+        request_token_object = auth.get(url)
+        oauth_data = self.str_to_dict(request_token_object.text)
+        self.oauth_token = oauth_data['oauth_token']
+
+
     def get_sign_in_url(self):
         """
         Generates URL to redirect user to sign in with twitter
@@ -71,19 +73,40 @@ class Authentication:
         url = f"https://api.twitter.com/oauth/authorize?oauth_token={self.oauth_token}"
         return url
 
+
     def generate_user_tokens(self, path):
         """
         Generates user tokens from oauth_verifer retrieved at user redirect (step 3 of sign-in-with-twitter process)
         """
-        remove_question_mark = str.split(path, '?')[1]
-        split_path = str.split(remove_question_mark, '&')
-        oauth_token = str.split(split_path[0], "=")[1]
-        oauth_verifier = str.split(split_path[1], "=")[1]
-        
+
+        oauth_data = self.str_to_dict(path)
         auth = self.generate_oauth1_session()
         url = "https://api.twitter.com/oauth/access_token"
-        data = {"oauth_token": oauth_token, "oauth_verifier": oauth_verifier}
-        response = auth.post(url, data=data)
-        parsed_response = str.split(response.text, "&")
-        self.ACCESS_TOKEN = str.split(parsed_response[0], "=")[1]
-        self.TOKEN_SECRET = str.split(parsed_response[1], "=")[1]
+        response = auth.post(url, data=oauth_data)
+        user_tokens = self.str_to_dict(response.text)
+        self.ACCESS_TOKEN = user_tokens['oauth_token']
+        self.TOKEN_SECRET = user_tokens['oauth_token_secret']
+        self.SCREEN_NAME = '@'+user_tokens['screen_name']
+
+
+    def str_to_dict(self, input_string):
+        """
+        Convert string containing keys and values to dictionary.
+        :param input_string: str, string of key/value pairs separated by = and &
+        :return: dictionary of key/value 
+        """
+
+        # Remove question mark at start if present
+        split_string = input_string
+        if "?" in split_string:
+            split_string = str.split(split_string,'?')[1]
+
+        # Split on ampersands and extract keys and values by splitting on equals
+        dict = {}
+        split_string = str.split(split_string,'&')
+        for kv_pair in split_string:
+            k,v = str.split(kv_pair,'=')
+            dict[k] = v
+
+        return dict
+
