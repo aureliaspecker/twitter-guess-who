@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, Selec
 from wtforms.validators import DataRequired
 
 class InputUsersForm(FlaskForm):
-    username = StringField('Input Up To 6 Twitter Usernames', validators=[DataRequired()])
+    username = StringField('Input up to 6 Twitter usernames', validators=[DataRequired()])
 
 class SelectForm(FlaskForm):
     select = SelectField('', choices=[], validators=[DataRequired()])
