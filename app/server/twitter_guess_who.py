@@ -7,6 +7,7 @@ from wordcloud import WordCloud, STOPWORDS
 from matplotlib import pyplot as plt
 import shortuuid
 import pickle5 as pickle
+import time
 from .api_handler import Users_Lookup, Search_Counts, Recent_Search_Data
 
 class TwitterGuessWho:
@@ -112,11 +113,29 @@ class TwitterGuessWho:
 
     def clear_data_files(self):
         """
-        Delete temporary data files.
+        Delete temporary data files from this game and old previous games.
         """
-        files = glob.glob('./app/data/*{}*.txt'.format(self.uuid))
-        for f in files:
+
+        # Delete tweet files
+        data_files = glob.glob('./app/data/*{}*.txt'.format(self.uuid))
+        for f in data_files:
             os.remove(f)
+
+        # Delete wordcloud image files
+        img_files = glob.glob('./app/static/img/wordcloud*{}*.png'.format(self.uuid))
+        for f in img_files:
+            os.remove(f)
+
+        # Delete any previous old files from aborted games in last day
+        time_threshold = time.time() - 24 * 60 * 60
+        prev_data_files = glob.glob('./app/data/*.txt')
+        prev_img_files = glob.glob('./app/static/img/wordcloud*.png')
+        for f in prev_data_files:
+            if os.stat(f).st_ctime < time_threshold:
+                os.remove(f)
+        for f in prev_img_files:
+            if os.stat(f).st_ctime < time_threshold:
+                os.remove(f)
 
 
     def make_api_calls(self):
