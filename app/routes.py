@@ -138,7 +138,6 @@ def round3():
 
     # Randomise order
     shuffle = tgw.get_shuffle()
-    user_shuffle = [users[i][1:] for i in shuffle]
     wordcloud_shuffle = [wordcloud_paths[i] for i in shuffle]
 
     # Generate forms
@@ -148,10 +147,10 @@ def round3():
     if form_list.is_submitted():
         points = 0
         for i in range(num_users):
-            player_answer = users[int(form_list.select_forms.data[i]['select'])][1:]
-            print("player answer:", player_answer)
-            correct_answer = user_shuffle[i]
-            print("correct anwer:", correct_answer)
+            player_answer = wordcloud_paths[int(form_list.select_forms.data[i]['select'])]
+            correct_answer = wordcloud_shuffle[i]
+            # Compare wordcloud paths instead of users
+            # Allows default wordclouds to evaluate as correct regardless of order
             if correct_answer==player_answer:
                 points += 1
         tgw.update_score(points)
