@@ -18,13 +18,16 @@
 {% endblock %}
 
 {% block content %}
+    {% if num_users <= 5 %}
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}
         </p>
+        <input class="btn btn-sm btn-primary" type="submit" value="Add">
     </form>
+    {% endif %}
     <hr>
     {% with messages = get_flashed_messages() %}
     {% if messages %}

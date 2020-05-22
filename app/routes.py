@@ -86,9 +86,9 @@ def round1():
             return redirect('/error')
 
         # Get data for this round
-        users = tgw.get_users()
+        tweet_counts, users = tgw.get_tweet_counts(sort=False)
+        sorted_tweets, sorted_users = tgw.get_tweet_counts(sort=True)
         num_users = len(users)
-        tweet_counts, jumbled_users = tgw.get_tweet_counts(sort=True)
 
         # Generate forms
         form_list = construct_select_forms(users)
@@ -97,12 +97,12 @@ def round1():
         if form_list.is_submitted():
             points = 0
             for i in range(num_users):
-                if jumbled_users[i]==users[int(form_list.select_forms.data[i]['select'])]:
+                if sorted_tweets[i] == tweet_counts[int(form_list.select_forms.data[i]['select'])]:
                     points += 1
             tgw.update_score(points)
             tgw.next_round += 1
             return redirect('/score')
-        return render_template('round1.html', title='Round1', n=num_users, form_list=form_list, tweet_counts=tweet_counts)
+        return render_template('round1.html', title='Round1', n=num_users, form_list=form_list, tweet_counts=sorted_tweets)
     except: 
         return redirect('/error')
 
@@ -141,7 +141,6 @@ def round3():
     """
     Third round of the game.
     """
-
     try:
         # Get data for this round
         users = tgw.get_users()
@@ -150,7 +149,6 @@ def round3():
 
         # Randomise order
         shuffle = tgw.get_shuffle()
-        user_shuffle = [users[i][1:] for i in shuffle]
         wordcloud_shuffle = [wordcloud_paths[i] for i in shuffle]
 
         # Generate forms
@@ -160,10 +158,10 @@ def round3():
         if form_list.is_submitted():
             points = 0
             for i in range(num_users):
-                player_answer = users[int(form_list.select_forms.data[i]['select'])][1:]
-                print("player answer:", player_answer)
-                correct_answer = user_shuffle[i]
-                print("correct anwer:", correct_answer)
+                player_answer = wordcloud_paths[int(form_list.select_forms.data[i]['select'])]
+                correct_answer = wordcloud_shuffle[i]
+                # Compare wordcloud paths instead of users
+                # Allows default wordclouds to evaluate as correct regardless of order
                 if correct_answer==player_answer:
                     points += 1
             tgw.update_score(points)
