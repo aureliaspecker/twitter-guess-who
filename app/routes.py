@@ -78,9 +78,9 @@ def round1():
         return redirect('/error')
 
     # Get data for this round
-    users = tgw.get_users()
+    tweet_counts, users = tgw.get_tweet_counts(sort=False)
+    sorted_tweets, sorted_users = tgw.get_tweet_counts(sort=True)
     num_users = len(users)
-    tweet_counts, jumbled_users = tgw.get_tweet_counts(sort=True)
 
     # Generate forms
     form_list = construct_select_forms(users)
@@ -89,12 +89,12 @@ def round1():
     if form_list.is_submitted():
         points = 0
         for i in range(num_users):
-            if jumbled_users[i]==users[int(form_list.select_forms.data[i]['select'])]:
+            if sorted_tweets[i] == tweet_counts[int(form_list.select_forms.data[i]['select'])]:
                 points += 1
         tgw.update_score(points)
         tgw.next_round += 1
         return redirect('/score')
-    return render_template('round1.html', title='Round1', n=num_users, form_list=form_list, tweet_counts=tweet_counts)
+    return render_template('round1.html', title='Round1', n=num_users, form_list=form_list, tweet_counts=sorted_tweets)
 
 
 @app.route('/round2', methods=['post', 'get'])

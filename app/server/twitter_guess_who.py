@@ -213,7 +213,6 @@ class TwitterGuessWho:
                 sort_order = np.argsort(-counts)
                 counts = [c for c in counts[sort_order]]
                 users = [u for u in users[sort_order]]
-
         return counts, users
 
 
