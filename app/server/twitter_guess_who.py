@@ -10,6 +10,7 @@ import pickle5 as pickle
 import time
 from .api_handler import Users_Lookup, Search_Counts, Recent_Search_Data
 
+
 class TwitterGuessWho:
     """
     Controls Twitter guess who game.
@@ -21,7 +22,6 @@ class TwitterGuessWho:
         Initialise game parameters.
         """
 
-        # Authentication
         self.auth = auth
         self.users = []
         self.num_users = 0
@@ -69,8 +69,9 @@ class TwitterGuessWho:
     def get_users(self):
         """
         Get all users.
-        :return: list of str
+        :return: list of str, users
         """
+
         return self.users
 
 
@@ -79,6 +80,7 @@ class TwitterGuessWho:
         Add points to current score.
         :param points: int
         """
+
         self.score += points
 
 
@@ -87,6 +89,7 @@ class TwitterGuessWho:
         Get current score
         :return: int, score
         """
+
         return self.score
 
 
@@ -95,19 +98,21 @@ class TwitterGuessWho:
         Get a shuffle of indices of same length as number of users.
         :return: list of int
         """
+
         np.random.seed(self.random_seed+offset)
         shuffle = np.arange(self.num_users)
         np.random.shuffle(shuffle)
         return shuffle
 
 
-    def get_uniform_random_integer(self, lb=0, ub=100):
+    def get_uniform_random_integer(self, lb=0, ub=40):
         """
         Get a random integer.
         :param lb: int, lower bound
         :param ub: int, upper bound
         :return: int, random uniformly generated in range
         """
+
         return np.random.randint(lb,ub)
 
 
@@ -141,7 +146,6 @@ class TwitterGuessWho:
     def make_api_calls(self):
         """
         Make API calls to get and store data ahead of the game. 
-        :return: 
         """
 
         # Get Tweet counts for each user
@@ -191,8 +195,9 @@ class TwitterGuessWho:
     def get_wordcloud_paths(self):
         """
         Get paths to image files for wordclouds.
-        :return: 
+        :return: list of str, wordcloud paths
         """
+
         return self.wordcloud_paths
 
 
@@ -219,7 +224,9 @@ class TwitterGuessWho:
     def get_user_bio(self):
         """
         Get user bios from hydrated user object.
+        :return: list of str, list of str, bios and corresponding users
         """
+
         users = []
         bios = []
 
@@ -249,7 +256,6 @@ class TwitterGuessWho:
         :return: list of str
         """
 
-        # stop_words = set(stopwords.words('english'))
         stop_words = set(STOPWORDS)
         stop_words.add('&amp')
         stop_words.add('amp')
@@ -272,6 +278,7 @@ class TwitterGuessWho:
     def make_wordclouds(self):
         """
         Make wordclouds for each user from recent Tweets.
+        :return: list of str, wordcloud paths
         """
 
         paths = []

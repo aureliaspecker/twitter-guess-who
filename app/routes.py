@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 from app import app
 from flask import render_template, flash, redirect, request
@@ -7,6 +6,7 @@ from app.forms import InputUsersForm, SelectFormList
 from .server.authentication import Authentication
 from .server.twitter_guess_who import TwitterGuessWho
 from .server.api_handler import Search_Gif
+
 
 # Setup auth and security
 SECRET_KEY = os.urandom(32)
@@ -28,6 +28,7 @@ def index():
     """
     Home page.
     """
+
     try: 
         signin = auth.get_sign_in_url()
         return render_template('index.html', title='Home', sign_in_url=signin)
@@ -38,8 +39,9 @@ def index():
 @app.route('/start', methods=['post', 'get'])
 def start():
     """
-    Callback to redirect user with Sign-In-With-Twitter
+    Callback to redirect user with Sign-In-With-Twitter.
     """
+
     try:
         # Get oauth_token and oauth_verifer for SIWT and generate user tokens
         auth.generate_user_tokens(request.full_path)
@@ -69,14 +71,15 @@ def setup():
                     flash('User does not exist: {}'.format(form.username.data))
                 flash('Users: '+', '.join(tgw.get_users()))
                 return redirect('/setup')
-        return render_template('setup.html', title='Setup', form=form, next_page=f"/round{tgw.next_round}", num_users=tgw.num_users)
+        return render_template('setup.html', form=form, next_page="/play", num_users=tgw.num_users)
     except: 
         return redirect('/error')
 
-@app.route('/round1',methods=['post','get'])
-def round1():
+
+@app.route('/play',methods=['post','get'])
+def fetch_data():
     """
-    First round of game.
+    Make API calls and fetch Twitter data for users.
     """
 
     try:
@@ -84,7 +87,19 @@ def round1():
         api_call_successful, status_code = tgw.make_api_calls()
         if not api_call_successful:
             return redirect('/error')
+        gif_url = "https://media.giphy.com/media/VgSjnwSoqiPjRRIJ1F/giphy.gif"
+        return render_template('play.html', gif_url=gif_url, next_page=f"/round{tgw.next_round}")
+    except:
+        return redirect('/error')
 
+
+@app.route('/round1',methods=['post','get'])
+def round1():
+    """
+    First round of game: Tweet counts.
+    """
+
+    try:
         # Get data for this round
         tweet_counts, users = tgw.get_tweet_counts(sort=False)
         sorted_tweets, sorted_users = tgw.get_tweet_counts(sort=True)
@@ -102,14 +117,15 @@ def round1():
             tgw.update_score(points)
             tgw.next_round += 1
             return redirect('/score')
-        return render_template('round1.html', title='Round1', n=num_users, form_list=form_list, tweet_counts=sorted_tweets)
+        return render_template('round1.html', n=num_users, form_list=form_list, tweet_counts=sorted_tweets)
     except: 
         return redirect('/error')
+
 
 @app.route('/round2', methods=['post', 'get'])
 def round2():
     """
-    Second round of the game.
+    Second round of the game: Twitter bios.
     """
 
     try: 
@@ -132,15 +148,17 @@ def round2():
             tgw.update_score(points)
             tgw.next_round += 1
             return redirect('/score')
-        return render_template('round2.html', title='Round2', n=num_users, form_list=form_list, user_bios=user_bios)
+        return render_template('round2.html', n=num_users, form_list=form_list, user_bios=user_bios)
     except: 
         return redirect('/error')
+
 
 @app.route('/round3', methods=['post', 'get'])
 def round3():
     """
-    Third round of the game.
+    Third round of the game: Tweet wordclouds.
     """
+
     try:
         # Get data for this round
         users = tgw.get_users()
@@ -167,7 +185,7 @@ def round3():
             tgw.update_score(points)
             tgw.next_round += 1
             return redirect('/score')
-        return render_template('round3.html', title='Round3', n=num_users, form_list=form_list, wc_paths = wordcloud_shuffle)
+        return render_template('round3.html', n=num_users, form_list=form_list, wc_paths = wordcloud_shuffle)
     except: 
         return redirect('/error')
 
@@ -175,15 +193,16 @@ def round3():
 @app.route('/error', methods=['get'])
 def error():
     """
-    Notifies user of an error if the API call was unsuccessful
+    Notifies user of an error if the API call was unsuccessful.
     """
+
     return render_template('error.html')
 
 
 @app.route('/score', methods=['get'])
 def score():
     """
-    Displays score
+    Displays score.
     """
 
     try: 
@@ -198,9 +217,9 @@ def score():
             relative_score = score/max_score
         else:
             relative_score = 0
-        gif_tags = ['disaster','bad','ok','awesome','epic'] # 0,0.25,0.5,0.75,1.0
+        gif_tags = ['disaster','disappointing','mediocre','congrats','awesome'] # 0,0.25,0.5,0.75,1.0
         try:
-            gifs = search_gif(query=gif_tags[int(relative_score/0.25)],limit=100)
+            gifs = search_gif(query=gif_tags[int(relative_score/0.25)],limit=40)
             gif_url = json.loads(gifs.text)['data'][random_gif_id]['images']['fixed_height']['url']
         except:
             gif_url = 'https://media.giphy.com/media/eYilisUwipOEM/giphy.gif'
@@ -208,10 +227,11 @@ def score():
     except: 
         return redirect('/error')
 
+
 @app.route('/round4', methods=['get'])
 def goodbye():
     """
-    Closing page
+    Closing page.
     """
 
     try:
@@ -222,22 +242,20 @@ def goodbye():
     except: 
         return redirect('/error')
 
+
 def construct_select_forms(users):
     """
     Construct form with given number of select forms, each with given options.
     :return: form of list of select forms 
     """
 
-    try:
-        form_list = SelectFormList()
-        for i in range(len(users)):
-            form_list.select_forms.append_entry()
-        for form in form_list.select_forms:
-            form.select.choices = [(i,user) for i,user in enumerate(users)]
+    form_list = SelectFormList()
+    for i in range(len(users)):
+        form_list.select_forms.append_entry()
+    for form in form_list.select_forms:
+        form.select.choices = [(i,user) for i,user in enumerate(users)]
 
-        return form_list
-    except: 
-        return redirect('/error')
+    return form_list
 
  
 

@@ -1,9 +1,12 @@
 import requests
 import datetime as dt
 
+
+##### Twitter API #####
+
 class Users_Lookup:
     """
-    Get fully hydrated user obejects.
+    GET users/lookup endpoint.
     """
 
     def __init__(self, authentication):
@@ -18,11 +21,12 @@ class Users_Lookup:
     def __call__(self, query):
         """
         :param query: str
-        :return: user objects for specified query
+        :return: fully hydrated user objects for specified query
         """
 
         url = f'{self.url}?screen_name={query}'
         return requests.request("GET", url=url, auth=self.auth)
+
 
 class Search_Counts:
     """
@@ -81,72 +85,19 @@ class Recent_Search_Data:
     def __call__(self, query):
         """
         :param query: str
-        :return: tweet payload for results matching query in previous 7 days
+        :return: Tweet payload for results matching query in previous 7 days
         """
 
         querystring = {"query": query,"max_results":"100"} 
         return requests.request("GET", url=self.url, data=self.payload, auth=self.auth, headers=self.headers, params=querystring)
 
 
-class Followers_Ids:
-    """
-    Followers ids endpoint.
-    """
-
-    def __init__(self, authentication):
-        """
-        :param authentication: Authentication object (see authentication.py)
-        """
-
-        self.url = "https://api.twitter.com/1.1/followers/ids.json"
-        self.headers = {
-            "content-type": "application/json"
-        }
-        self.auth = authentication.generate_oauth1()
-
-
-    def __call__(self, query):
-        """
-        :param query: str, user 
-        :return: user ids corresponding to followers of given user
-        """
-
-        querystring = "{{\"screen_name\": \"{}\"}}".format(query)
-        requests.get(self.url, params=querystring, auth=self.auth)
-        return requests.get(self.url, params=querystring, auth=self.auth)
-
-
-class Random_Gif:
-    """
-    GIPHY API random gif endpoint.    
-    """
-
-    def __init__(self, authentication_key):
-        """
-        :param authentication_key: str, api key
-        """
-
-        self.url = f"https://api.giphy.com/v1/gifs/random?api_key={authentication_key}"
-
-
-    def __call__(self, tags, limit=1):
-        """
-        :param tags: str, or list of string
-        :return: single gif object
-        """
-
-        if isinstance(tags,str):
-            url = self.url + "&tag=" + tags + f"&limit={limit}"
-        elif isinstance(tags,list):
-            url = self.url + "&tag=" + '+'.join(tags) + f"&limit={limit}"
-        return requests.get(url=url)
-
+##### GIPHY API #####
 
 class Search_Gif:
     """
     GIPHY API search gif endpoint.
     """
-
 
     def __init__(self, authentication_key):
         """
