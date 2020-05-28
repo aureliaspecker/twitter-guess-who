@@ -10,7 +10,7 @@ from .server.api_handler import Search_Gif
 
 
 # Setup auth and security
-SECRET_KEY = os.urandom(32)
+SECRET_KEY = os.getenv('SECRET_KEY')
 app.config['SECRET_KEY'] = SECRET_KEY
 
 # Initialise GIPHY API
