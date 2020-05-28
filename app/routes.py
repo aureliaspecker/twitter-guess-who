@@ -33,7 +33,7 @@ def index():
     # try:
     # Start new session
     player_id = shortuuid.uuid()
-    print("PLAYER ID 1:", player_id, file=sys.stderr)
+    print("PLAYER ID 1:", player_id)
     auth = Authentication()
     signin = auth.get_sign_in_url()
     session['player_id'] = player_id
@@ -70,7 +70,7 @@ def setup():
     player_id = session['player_id']
     tgw = player_games[player_id]
     form = InputUsersForm()
-    print("PLAYER ID 2:", player_id, file=sys.stderr)
+    print("PLAYER ID 2:", player_id)
     if form.validate_on_submit():
         if tgw.num_users == 6: 
             return redirect('/round1')
