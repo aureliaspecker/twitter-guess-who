@@ -30,7 +30,11 @@ class TwitterGuessWho:
         self.next_round = 1
         # Random seed so numbers change per game, but not between page reloads
         self.random_seed = np.random.randint(0,100)
+        self.directory = os.path.dirname(os.path.abspath(__file__))
+        self.parent_dir = os.path.join(self.directory, os.pardir)
 
+        print("directory:", self.directory)
+        print("parent:", self.parent_dir)
 
     def add_user(self,user):
         """
@@ -58,7 +62,7 @@ class TwitterGuessWho:
                 screen_name = parsed[0]['screen_name']
                 self.users.append(f'@{screen_name}')
                 self.num_users += 1
-                with open(f"./app/data/user_data_{user[1:]}_{self.uuid}.txt", "w") as user_file:
+                with open(f"{self.parent_dir}/data/user_data_{user[1:]}_{self.uuid}.txt", "w") as user_file:
                     json.dump(user_data.text, user_file)
             else:
                 error_code = 2
@@ -149,7 +153,7 @@ class TwitterGuessWho:
         """
 
         # Get Tweet counts for each user
-        with open(f"./app/data/tweet_counts_{self.uuid}.txt", "wb") as data_file:
+        with open(f"{self.parent_dir}/data/tweet_counts_{self.uuid}.txt", "wb") as data_file:
             # Initiate empty dictionary
             counts_data = {} 
             # Get number of Tweets for each user
@@ -166,7 +170,7 @@ class TwitterGuessWho:
             pickle.dump(counts_data, data_file)
 
         # Get recent Tweets for each user
-        with open(f"./app/data/recent_search_{self.uuid}.txt", "wb") as data_file:
+        with open(f"{self.parent_dir}/data/recent_search_{self.uuid}.txt", "wb") as data_file:
             # Initiate empty dictionary
             tweet_data = {}
             # Get Tweets for each user
@@ -208,7 +212,7 @@ class TwitterGuessWho:
         :return: list int, list str, of counts and users 
         """
 
-        with open(f"./app/data/tweet_counts_{self.uuid}.txt", "rb") as data_file:
+        with open(f"{self.parent_dir}/data/tweet_counts_{self.uuid}.txt", "rb") as data_file:
             data = pickle.load(data_file)
             users = [k for k,v in data.items()]
             counts = [v for k,v in data.items()]
@@ -233,7 +237,7 @@ class TwitterGuessWho:
         random_order = self.get_shuffle(1)
         for i in random_order:
             random_user = self.users[i]
-            with open(f"./app/data/user_data_{random_user[1:]}_{self.uuid}.txt", "rb") as user_file:
+            with open(f"{self.parent_dir}/data/user_data_{random_user[1:]}_{self.uuid}.txt", "rb") as user_file:
                 data = json.load(user_file)
                 parsed = json.loads(data)
                 user = parsed[0]["screen_name"]
@@ -282,7 +286,7 @@ class TwitterGuessWho:
         """
 
         paths = []
-        with open(f"./app/data/recent_search_{self.uuid}.txt", "rb") as data_file:
+        with open(f"{self.parent_dir}/data/recent_search_{self.uuid}.txt", "rb") as data_file:
             # Load tweets from file
             tweet_data = pickle.load(data_file)
 
