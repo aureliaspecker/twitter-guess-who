@@ -62,7 +62,7 @@ class TwitterGuessWho:
                 screen_name = parsed[0]['screen_name']
                 self.users.append(f'@{screen_name}')
                 self.num_users += 1
-                with open(f"{self.parent_dir}/data/user_data_{user[1:]}_{self.uuid}.txt", "w") as user_file:
+                with open(f"{self.parent_dir}/data/user_data_{screen_name}_{self.uuid}.txt", "w") as user_file:
                     json.dump(user_data.text, user_file)
             else:
                 error_code = 2
