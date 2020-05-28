@@ -30,11 +30,9 @@ class TwitterGuessWho:
         self.next_round = 1
         # Random seed so numbers change per game, but not between page reloads
         self.random_seed = np.random.randint(0,100)
+        
         self.directory = os.path.dirname(os.path.abspath(__file__))
         self.parent_dir = os.path.join(self.directory, os.pardir)
-
-        print("directory:", self.directory)
-        print("parent:", self.parent_dir)
 
     def add_user(self,user):
         """
