@@ -132,7 +132,7 @@ def round1():
             if sorted_tweets[i] == tweet_counts[int(form_list.select_forms.data[i]['select'])]:
                 points += 1
         tgw.update_score(points)
-        tgw.next_round += 2
+        tgw.next_round += 1
         return redirect('/score')
     return render_template('round1.html', n=num_users, form_list=form_list, tweet_counts=sorted_tweets)
     # except: 

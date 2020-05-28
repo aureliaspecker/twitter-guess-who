@@ -235,6 +235,7 @@ class TwitterGuessWho:
         bios = []
 
         random_order = self.get_shuffle(1)
+        print(os.listdir(f"{self.parent_dir}/data"))
         for i in random_order:
             random_user = self.users[i]
             with open(f"{self.parent_dir}/data/user_data_{random_user[1:]}_{self.uuid}.txt", "rb") as user_file:
