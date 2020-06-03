@@ -15,25 +15,37 @@
         {% block js %}{% endblock %}
 
         <title>{% block title %}{% endblock %}</title>
-        {% block head %}			
-		{% endblock %}
+
     </head>
-    <body class="text-center">
-        <div class="col-md-2 container d-flex h-50">
-            <div class="row justify-content-center align-self-center">
-                <main role="main" class="inner cover">
-                    <h1 class="cover-heading">{% block header %}{% endblock %}</h1>
-                    <p class="lead">{% block paragraph %}{% endblock %}</p>
-                    {% block content %}{% endblock %}
-                </main>
+
+    <body>
+
+        <div class="container-fluid" class="mx-auto" style="width: 200px;">
+
+            <h1 class="text-center">{% block header %}{% endblock %}</h1>
+
+            <div class="text-center">
+                <p>{% block paragraph %}{% endblock %}</p>
             </div>
-        </div>
+            
+            <div class="text-center">
+                <p>{% block content %}{% endblock %}</p> 
+            </div>
+
+            <div class="text-center">
+                <p class="font-italic"><small>{% block disclaimer %}{% endblock %}</small></p> 
+            </div>
+
+        </div class="container-fluid">
+
         <div>
-        {% block custom %}{% endblock %}
+
+            <div class="text-center">
+                <p>{% block custom %}{% endblock %}</p> 
+            </div>
+
         </div>
-        <br>
-        <div>
-        <p><i><small>{% block disclaimer %} {% endblock %}</small></i></p>
-        </div>
+
     </body>
+
 </html>

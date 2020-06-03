@@ -12,11 +12,11 @@
 {% endblock %}
 
 {% block content %}
-    <form action="" method="post" novalidate>
+    <form action="" method="post" novalidate class="row justify-content-center">
         {{ form_list.hidden_tag() }}
     <ol type="a">
         {% for i in range(0, n) %}
-        <li>{{tweet_counts[i]}} &emsp; {{form_list.select_forms[i].select.label}} {{form_list.select_forms[i].select}}</li>
+        <li style="margin: 20px 0;">{{tweet_counts[i]}} &emsp; {{form_list.select_forms[i].select.label}} {{form_list.select_forms[i].select}}</li>
         {% endfor %}
     </ol>
         <input class="btn btn-lg btn-primary" type="submit" value="Submit">

@@ -18,8 +18,9 @@
 {% endblock %}
 
 {% block content %}
+
     {% if num_users <= 5 %}
-    <form action="" method="post" novalidate>
+    <form action="" method="post" novalidate class="row justify-content-center">
         {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }}<br>
@@ -39,7 +40,8 @@
     {% endif %}
     {% endwith %}
 
-    {% if num_users != 0 %}
-        <a href={{next_page}} id=button_alert class="btn btn-lg btn-primary">Submit users</a>
-    {% endif %}
+        {% if num_users != 0 %}
+            <a href={{next_page}} id=button_alert class="btn btn-lg btn-primary">Submit users</a>
+        {% endif %}
+
 {% endblock %}
