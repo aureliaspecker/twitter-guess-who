@@ -337,7 +337,7 @@ class TwitterGuessWho:
         """
         if self.tweet_sent == False:
             statuses_update = Statuses_Update(self.auth)
-            status = f"I just got a score of {self.score}/{self.num_users*3} playing Twitter Guess Who 🎉 \n \n Join me and play here: https://twitter-guess-who.herokuapp.com/"
+            status = f"I just got a score of {self.score}/{self.num_users*3} playing Twitter Guess Who 🎉 \n \n You can also play here: https://twitter-guess-who.herokuapp.com/"
             response = statuses_update(message=status)
 
             if response.status_code == 200:
