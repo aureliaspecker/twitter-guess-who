@@ -3,7 +3,7 @@ import json
 import shortuuid
 from app import app
 from flask import render_template, flash, redirect, request, session
-from app.forms import InputUsersForm, SelectFormList
+from app.forms import InputUsersForm, SelectFormList, TweetForm
 from .server.authentication import Authentication
 from .server.twitter_guess_who import TwitterGuessWho
 from .server.api_handler import Search_Gif
@@ -256,20 +256,27 @@ def score():
         return redirect('/error')
 
 
-@app.route('/round4', methods=['get'])
+@app.route('/round4', methods=['get', 'post'])
 def goodbye():
     """
     Closing page.
     """
 
     try:
+        response = ""
+        form = TweetForm()
         player_id = session['player_id']
-        player_auths.pop(player_id)
-        tgw = player_games.pop(player_id)
-        tgw.clear_data_files()
+        tgw = player_games[player_id]
+        if form.is_submitted():
+            response = tgw.post_status_update()
+            flash(response)
+        # player_id = session['player_id']
+        # player_auths.pop(player_id)
+        # tgw = player_games.pop(player_id)
+        # tgw.clear_data_files()
         gif_tags = ['see you next time']
         gif_url = json.loads(search_gif(query=gif_tags).text)['data'][0]['images']['fixed_height']['url']
-        return render_template('goodbye.html', gif_url=gif_url, next_page="/index")
+        return render_template('goodbye.html', gif_url=gif_url, next_page="/index", response=response)
     except: 
         return redirect('/error')
 

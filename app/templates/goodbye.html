@@ -1,4 +1,5 @@
 {% extends "parent.html" %}
+
 {% block title %}Goodbye{% endblock %}
 
 {% block header %}
@@ -12,8 +13,22 @@
 {% endblock %}
 
 {% block custom %}
+<form action="" method="post" novalidate class="row justify-content-center">
+    <input class="btn btn-lg btn-primary" type="submit" value="Tweet my score">
+</form>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<p>
+    {% for message in messages %}
+    <p> {{ message }} </p>
+    {% endfor %}
+</p>
+{% endif %}
+{% endwith %}
+
 <div class="row justify-content-center">
-    <a href={{next_page}} id=button_alert class="btn btn-lg btn-primary">Play again</a>
+    <a href={{next_page}} class="btn btn-lg btn-primary">Play again</a>
 </div>
 {% endblock %}
 

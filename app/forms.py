@@ -11,5 +11,7 @@ class SelectForm(FlaskForm):
 class SelectFormList(FlaskForm):
     select_forms = FieldList(FormField(SelectForm))
 
+class TweetForm(FlaskForm):
+    pass
 
 

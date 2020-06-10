@@ -91,6 +91,30 @@ class Recent_Search_Data:
         querystring = {"query": query,"max_results":"100"} 
         return requests.request("GET", url=self.url, data=self.payload, auth=self.auth, headers=self.headers, params=querystring)
 
+class Statuses_Update: 
+    """
+    POST statuses/update endpoint.
+    """
+
+    def __init__(self, authentication):
+        """
+        :param authentication: Authentication objext (see authentication.py)
+        """
+
+        self.url = "https://api.twitter.com/1.1/statuses/update.json"
+        self.auth = authentication.generate_oauth1()
+        self.headers = {
+            "Content-Type": "application/json"
+        }
+        self.payload = ""
+        
+    def __call__(self, message):
+        """
+        :param message: str
+        :return: posts status update to authenticated Twitter user's timeline
+        """
+        params = {"status": message} 
+        return requests.request("POST", url=self.url, data=self.payload, auth=self.auth, headers=self.headers, params=params)
 
 ##### GIPHY API #####
 

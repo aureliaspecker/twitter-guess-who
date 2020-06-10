@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import shortuuid
 import pickle5 as pickle
 import time
-from .api_handler import Users_Lookup, Search_Counts, Recent_Search_Data
+from .api_handler import Users_Lookup, Search_Counts, Recent_Search_Data, Statuses_Update
 
 
 class TwitterGuessWho:
@@ -30,6 +30,7 @@ class TwitterGuessWho:
         self.next_round = 1
         # Random seed so numbers change per game, but not between page reloads
         self.random_seed = np.random.randint(0,100)
+        self.tweet_sent = False
         
         self.directory = os.path.dirname(os.path.abspath(__file__))
         self.parent_dir = os.path.join(self.directory, os.pardir)
@@ -233,7 +234,6 @@ class TwitterGuessWho:
         bios = []
 
         random_order = self.get_shuffle(1)
-        print(os.listdir(f"{self.parent_dir}/data"))
         for i in random_order:
             random_user = self.users[i]
             with open(f"{self.parent_dir}/data/user_data_{random_user[1:]}_{self.uuid}.txt", "rb") as user_file:
@@ -317,3 +317,19 @@ class TwitterGuessWho:
 
         return paths
 
+    def post_status_update(self):
+        """
+        Post message to Twitter
+        """
+        if self.tweet_sent == False:
+            statuses_update = Statuses_Update(self.auth)
+            status = f"I just got a score of {self.score}/{self.num_users*3} playing Twitter Guess Who 🎉 \n \n Join me and play here: https://twitter-guess-who.herokuapp.com/"
+            response = statuses_update(message=status)
+            
+            if response.status_code == 200: 
+                self.tweet_sent = True
+                return "Tweet sent!"
+            else: 
+                return "Something went wrong. We were unable to send your Tweet."
+        else: 
+            return "Tweet already sent!"

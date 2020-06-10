@@ -6,9 +6,16 @@
 {% endblock %}
 
 {% block paragraph %} 
-   The ultimate Twitter-guessing game 🎲 
+   The ultimate 
+   <br> Twitter-guessing game 
+   <br> 🎲 
 {% endblock %}
 
 {% block content %}
     <a href={{sign_in_url}} class="btn btn-lg btn-primary ">Sign in with Twitter</a>
+{% endblock %}
+
+{% block custom %}
+    <br>This game uses the Twitter API to test your knowledge of different Twitter users, 
+    <br>based on their Twitter bio and recent public Tweets. 
 {% endblock %}
