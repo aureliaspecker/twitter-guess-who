@@ -7,8 +7,7 @@ class Authentication:
     Class to handle Twitter credentials to access the API.
     """
 
-
-    def __init__(self): 
+    def __init__(self):
         """
         Get app credentials from os environment and fetch user tokens using sign-in-with-Twitter.
         """
@@ -19,17 +18,20 @@ class Authentication:
         self.ENV = os.getenv("TWITTER_ENV")
         self.fetch_request_token()
 
-
     def generate_oauth1(self):
         """
         Generate OAuth1 using app and user credentials.
         :return: OAuth1
         """
 
-        return OAuth1(self.CONSUMER_KEY, self.CONSUMER_SECRET,
-                   self.ACCESS_TOKEN, self.TOKEN_SECRET,
-                   signature_method="HMAC-SHA1",signature_type='query')
-
+        return OAuth1(
+            self.CONSUMER_KEY,
+            self.CONSUMER_SECRET,
+            self.ACCESS_TOKEN,
+            self.TOKEN_SECRET,
+            signature_method="HMAC-SHA1",
+            signature_type="query",
+        )
 
     def generate_oauth1_session(self):
         """
@@ -37,19 +39,18 @@ class Authentication:
         :return: OAuth1 session.
         """
 
-        return OAuth1Session(client_key=self.CONSUMER_KEY, 
-                            client_secret=self.CONSUMER_SECRET)
-
+        return OAuth1Session(
+            client_key=self.CONSUMER_KEY, client_secret=self.CONSUMER_SECRET
+        )
 
     def bearer_oauth(self, r):
         """
         Method required by bearer token authentication.
         """
 
-        r.headers['Authorization'] = f"Bearer {self.BEARER_TOKEN}"
-        r.headers['User-Agent'] = 'LabsResearchSearchQuickStartPython'
+        r.headers["Authorization"] = f"Bearer {self.BEARER_TOKEN}"
+        r.headers["User-Agent"] = "LabsResearchSearchQuickStartPython"
         return r
-
 
     def __str__(self):
         """
@@ -59,17 +60,15 @@ class Authentication:
 
         return f"Consumer key: {self.CONSUMER_KEY} \nConsumer secret: {self.CONSUMER_SECRET} \nAccess token: {self.ACCESS_TOKEN} \nToken secret: {self.TOKEN_SECRET} \nBearer token: {self.BEARER_TOKEN} \nRequset token: {self.oauth_token}"
 
-
     def fetch_request_token(self):
         """
         Fetches request token (step 1 of sign-in-with-Twitter).
         """
-        auth = self.generate_oauth1_session() 
+        auth = self.generate_oauth1_session()
         url = "https://api.twitter.com/oauth/request_token"
         request_token_object = auth.get(url)
         oauth_data = self.str_to_dict(request_token_object.text)
-        self.oauth_token = oauth_data['oauth_token']
-
+        self.oauth_token = oauth_data["oauth_token"]
 
     def get_sign_in_url(self):
         """
@@ -77,7 +76,6 @@ class Authentication:
         """
         url = f"https://api.twitter.com/oauth/authorize?oauth_token={self.oauth_token}"
         return url
-
 
     def generate_user_tokens(self, path):
         """
@@ -89,10 +87,9 @@ class Authentication:
         url = "https://api.twitter.com/oauth/access_token"
         response = auth.post(url, data=oauth_data)
         user_tokens = self.str_to_dict(response.text)
-        self.ACCESS_TOKEN = user_tokens['oauth_token']
-        self.TOKEN_SECRET = user_tokens['oauth_token_secret']
-        self.SCREEN_NAME = '@'+user_tokens['screen_name']
-
+        self.ACCESS_TOKEN = user_tokens["oauth_token"]
+        self.TOKEN_SECRET = user_tokens["oauth_token_secret"]
+        self.SCREEN_NAME = "@" + user_tokens["screen_name"]
 
     def str_to_dict(self, input_string):
         """
@@ -104,14 +101,13 @@ class Authentication:
         # Remove question mark at start if present
         split_string = input_string
         if "?" in split_string:
-            split_string = str.split(split_string,'?')[1]
+            split_string = str.split(split_string, "?")[1]
 
         # Split on ampersands and extract keys and values by splitting on equals
         dict = {}
-        split_string = str.split(split_string,'&')
+        split_string = str.split(split_string, "&")
         for kv_pair in split_string:
-            k,v = str.split(kv_pair,'=')
+            k, v = str.split(kv_pair, "=")
             dict[k] = v
 
         return dict
-

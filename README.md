@@ -2,7 +2,7 @@
 
 "Twitter Guess Who" is a game that uses the Twitter API to test your knowledge on users of your choice. The game constitutes of three rounds: 
 
-1. **Tweet count round**: where you have to guess the number of Tweets sent in the last month by a list of users of your choice. 
+1. **Tweet count round**: where you have to guess the number of public Tweets sent in the last month by a list of users of your choice. 
 2. **Bio round**: where you have to match users to the correct list of keywords from their bios. 
 3. **Wordcloud round**: where you have to match users to the correct wordcloud (generated from Tweets sent in the last seven days).
 
@@ -34,4 +34,4 @@ You can find your GIPHY API key on your GIPHY [developer dashboard](https://deve
 
 The SECRET_KEY variable can be anything you like (i.e. random number).
 
-Note: The Twitter access token and access token secret required with some of the Twitter APIs is generated with [Sign In With Twitter](https://developer.twitter.com/en/docs/basics/authentication/guides/log-in-with-twitter) when a user first starts playing the game.
+Note: The Twitter access token and access token secret required with some of the Twitter APIs are generated with [Sign In With Twitter](https://developer.twitter.com/en/docs/basics/authentication/guides/log-in-with-twitter) when a user first starts playing the game.

@@ -4,6 +4,7 @@ import datetime as dt
 
 ##### Twitter API #####
 
+
 class Users_Lookup:
     """
     GET users/lookup endpoint.
@@ -17,14 +18,13 @@ class Users_Lookup:
         self.url = f"https://api.twitter.com/1.1/users/lookup.json"
         self.auth = authentication.generate_oauth1()
 
-
     def __call__(self, query):
         """
         :param query: str
         :return: fully hydrated user objects for specified query
         """
 
-        url = f'{self.url}?screen_name={query}'
+        url = f"{self.url}?screen_name={query}"
         return requests.request("GET", url=url, auth=self.auth)
 
 
@@ -42,15 +42,18 @@ class Search_Counts:
         env = authentication.ENV
         if env == None:
             raise ValueError("Environment variable not found")
-        self.url = f"https://api.twitter.com/1.1/tweets/search/fullarchive/{env}/counts.json"
-        self.headers = {
-            "content-type": "application/json"
-        }
+        self.url = (
+            f"https://api.twitter.com/1.1/tweets/search/fullarchive/{env}/counts.json"
+        )
+        self.headers = {"content-type": "application/json"}
         self.auth = authentication.generate_oauth1()
         self.bucket = bucket
-        self.to_date = (dt.datetime.utcnow() + dt.timedelta(minutes=-1)).strftime("%Y%m%d%H%M")
-        self.from_date = (dt.datetime.utcnow() + dt.timedelta(days=-28,minutes=-1)).strftime("%Y%m%d%H%M")
-
+        self.to_date = (dt.datetime.utcnow() + dt.timedelta(minutes=-1)).strftime(
+            "%Y%m%d%H%M"
+        )
+        self.from_date = (
+            dt.datetime.utcnow() + dt.timedelta(days=-28, minutes=-1)
+        ).strftime("%Y%m%d%H%M")
 
     def __call__(self, query):
         """
@@ -58,8 +61,12 @@ class Search_Counts:
         :return: data volumes for specified query
         """
 
-        payload = "{{\n\t\"query\": \"{}\", \n\t\"bucket\": \"{}\",\n\t\t\"fromDate\": \"{}\",\n\t\t\"toDate\": \"{}\"\n}}".format(query, self.bucket, self.from_date, self.to_date)
-        return requests.request("POST", self.url, data=payload, headers=self.headers, auth=self.auth)
+        payload = '{{\n\t"query": "{}", \n\t"bucket": "{}",\n\t\t"fromDate": "{}",\n\t\t"toDate": "{}"\n}}'.format(
+            query, self.bucket, self.from_date, self.to_date
+        )
+        return requests.request(
+            "POST", self.url, data=payload, headers=self.headers, auth=self.auth
+        )
 
 
 class Recent_Search_Data:
@@ -76,11 +83,8 @@ class Recent_Search_Data:
         self.url = "https://api.twitter.com/labs/2/tweets/search"
         self.max_results = max_results
         self.auth = authentication.bearer_oauth
-        self.headers = {
-            "Accept-Encoding": "gzip"
-        }
+        self.headers = {"Accept-Encoding": "gzip"}
         self.payload = ""
-
 
     def __call__(self, query):
         """
@@ -88,10 +92,18 @@ class Recent_Search_Data:
         :return: Tweet payload for results matching query in previous 7 days
         """
 
-        querystring = {"query": query,"max_results":"100"} 
-        return requests.request("GET", url=self.url, data=self.payload, auth=self.auth, headers=self.headers, params=querystring)
+        querystring = {"query": query, "max_results": "100"}
+        return requests.request(
+            "GET",
+            url=self.url,
+            data=self.payload,
+            auth=self.auth,
+            headers=self.headers,
+            params=querystring,
+        )
 
-class Statuses_Update: 
+
+class Statuses_Update:
     """
     POST statuses/update endpoint.
     """
@@ -103,20 +115,27 @@ class Statuses_Update:
 
         self.url = "https://api.twitter.com/1.1/statuses/update.json"
         self.auth = authentication.generate_oauth1()
-        self.headers = {
-            "Content-Type": "application/json"
-        }
+        self.headers = {"Content-Type": "application/json"}
         self.payload = ""
-        
+
     def __call__(self, message):
         """
         :param message: str
         :return: posts status update to authenticated Twitter user's timeline
         """
-        params = {"status": message} 
-        return requests.request("POST", url=self.url, data=self.payload, auth=self.auth, headers=self.headers, params=params)
+        params = {"status": message}
+        return requests.request(
+            "POST",
+            url=self.url,
+            data=self.payload,
+            auth=self.auth,
+            headers=self.headers,
+            params=params,
+        )
+
 
 ##### GIPHY API #####
+
 
 class Search_Gif:
     """
@@ -130,8 +149,7 @@ class Search_Gif:
 
         self.url = f"https://api.giphy.com/v1/gifs/search?api_key={authentication_key}"
 
-
-    def __call__(self, query, limit=10, rating='g', lang='en'):
+    def __call__(self, query, limit=10, rating="g", lang="en"):
         """
         :param query: gif tags
         :param limit: number of gifs
@@ -140,5 +158,5 @@ class Search_Gif:
         :return: json response containing list of gifs 
         """
 
-        url = f'{self.url}&q={query}&limit={limit}&rating={rating}&lang={lang}'
+        url = f"{self.url}&q={query}&limit={limit}&rating={rating}&lang={lang}"
         return requests.get(url=url)
